@@ -1,26 +1,46 @@
 const Discord = require("discord.js")
 const config = require("./config.json")
-const client = new Discord.Client({ intents: [
-    Discord.GatewayIntentBits.GuildMembers,
-    Discord.GatewayIntentBits.GuildEmojisAndStickers,
-    Discord.GatewayIntentBits.MessageContent,
-    Discord.GatewayIntentBits.DirectMessages,
-    Discord.GatewayIntentBits.GuildIntegrations,
-    Discord.GatewayIntentBits.Guilds,
-    Discord.GatewayIntentBits.GuildMembers,
-    Discord.GatewayIntentBits.GuildMessages,
-    Discord.GatewayIntentBits.GuildMessageReactions,
-    Discord.GatewayIntentBits.GuildPresences,
-    Discord.GatewayIntentBits.GuildModeration,
-    Discord.GatewayIntentBits.GuildWebhooks,
-    Discord.GatewayIntentBits.GuildScheduledEvents
-] });
+const fs = require('fs');
 const ms = require('ms');
-const fs = require('fs')
-const { QuickDB } = require('quick.db');
-const db = new QuickDB();
 
-module.exports = client;
+const client = new Discord.Client({
+  intents: [1, 512, 32768, 2, 128,
+    Discord.IntentsBitField.Flags.DirectMessages,
+    Discord.IntentsBitField.Flags.GuildInvites,
+    Discord.IntentsBitField.Flags.GuildMembers,
+    Discord.IntentsBitField.Flags.GuildPresences,
+    Discord.IntentsBitField.Flags.Guilds,
+    Discord.IntentsBitField.Flags.MessageContent,
+    Discord.IntentsBitField.Flags.Guilds,
+    Discord.IntentsBitField.Flags.GuildMessageReactions,
+    Discord.IntentsBitField.Flags.GuildEmojisAndStickers
+  ],
+  partials: [
+    Discord.Partials.User,
+    Discord.Partials.Message,
+    Discord.Partials.Reaction,
+    Discord.Partials.Channel,
+    Discord.Partials.GuildMember
+  ]
+});
+
+module.exports = client
+
+client.on('interactionCreate', (interaction) => {
+
+  if (interaction.type === Discord.InteractionType.ApplicationCommand) {
+
+    const cmd = client.slashCommands.get(interaction.commandName);
+
+    if (!cmd) return interaction.reply(`Error`);
+
+    interaction["member"] = interaction.guild.members.cache.get(interaction.user.id);
+
+    cmd.run(client, interaction)
+
+  }
+})
+
 client.slashCommands = new Discord.Collection()
 
 require('./handler')(client)
@@ -28,7 +48,6 @@ require('./handler')(client)
 client.login(config.token)
 
 client.on('ready', async () => {
-
   console.log(`Estou online em ${client.user.username}!`)
 
   let atividades = [
@@ -42,26 +61,6 @@ client.on('ready', async () => {
   setInterval(() => {
     client.user.setActivity(atividades[i++ % atividades.length])
   }, ms('15s'));
-})
-
-client.on('interactionCreate', (interaction) => {
-  if(interaction.user.bot) return;
-    
-    if(interaction.type === Discord.InteractionType.ApplicationCommand){
-        
-        const cmd = client.slashCommands.get(interaction.commandName);
-
-      if (!cmd) return interaction.reply(`Error`);
-
-      interaction["member"] = interaction.guild.members.cache.get(interaction.user.id);
-
-      try {
-        cmd.run(client, interaction)
-      } catch (error) {
-       console.log(error)
-      }
-
-   }
 })
 
 fs.readdir('./Eventos', (err, file) => {
