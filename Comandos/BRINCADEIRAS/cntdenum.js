@@ -16,8 +16,18 @@ module.exports = {
     ],
 
     run: async (client, interaction) => {
+        let channelCount = await db.get(`channelCount`);
         let canal = interaction.options.getChannel('canal')
-        if (canal.type !== ChannelType.GuildText || !canal) return interaction.reply({ content: `**❌ | CANAL DE TEXTO INVÁLIDO!**`, ephemeral: true })
+        if(channelCount === canal.id) return interaction.reply({content: `**❌ | Ei, esse canal já foi configurado como o canal de contagem!**`}).then((msg) => {
+            setTimeout(() => {
+                msg.delete();
+            }, 10_000);
+        })
+        if (canal.type !== ChannelType.GuildText || !canal) return interaction.reply({ content: `**❌ | CANAL DE TEXTO INVÁLIDO!**`, ephemeral: true }).then((msg) => {
+            setTimeout(() => {
+                msg.delete();
+            }, 10_000);
+        })
 
         await db.set(`channelCount`, canal.id)
         interaction.reply(`✅ | O canal ${canal} foi configurado com sucesso!`).catch((err) => {
