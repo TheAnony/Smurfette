@@ -8,6 +8,7 @@ client.on('messageCreate', async(message) => {
     if (message.author.bot) return;
     let canal = await db.get(`channelCount`)
     if(!canal) return;
+    if(message.channel.id !== canal) return;
     let numberCount = await db.get(`numberCount_${message.channel.id}`) 
     if (!numberCount) numberCount = 0
 
