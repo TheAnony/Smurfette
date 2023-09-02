@@ -12,15 +12,15 @@ module.exports = {
         let cateto = ['cara', 'coroa'];
         let resposta = cateto[Math.floor(Math.random() * 2)];
 
-        interaction.reply(`**🪙 A moeda foi lançada para o alto e deu...**`).then((msg) => {
+        interaction.reply(`**🪙 | A moeda foi lançada para o alto e deu...**`).then((msg) => {
             setTimeout(() => {
                 switch (resposta) {
                     case 'cara':
-                        interaction.editReply(`**🪙 A moeda foi lançada para o alto e deu...**\nCara!`)
+                        interaction.editReply(`**🪙 | A moeda foi lançada para o alto e deu...**\nCara!`)
                         break;
 
                     case 'coroa':
-                        interaction.editReply(`**🪙 A moeda foi lançada para o alto e deu...**\nCoroa!`)
+                        interaction.editReply(`**🪙 | A moeda foi lançada para o alto e deu...**\nCoroa!`)
                         break;
 
                     default:
