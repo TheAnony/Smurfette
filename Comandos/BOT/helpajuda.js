@@ -61,7 +61,7 @@ module.exports = {
       .setTitle(`- Total de comandos: ${emojis.num3}\n`)
       .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setDescription(
-        `[${emoji.indisponivel}][${emoji.permrole}] ${p} \`\`Contagem:\`\` **Começa uma contagem numeral no canal atual.**\n\n` +
+        `[${emoji.disponivel}][${emoji.permrole}] ${p} \`\`Contagem:\`\` **Começa uma contagem numeral no canal atual.**\n\n` +
         `[${emoji.indisponivel}] ${p} \`\`Cara-coroa:\`\` **Lança uma moeda que dá cara ou coroa.**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Pedra-papel-tesoura:\`\` **Começa um jogo de pedra, papel e tesoura.**\n\n`
       )
