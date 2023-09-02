@@ -37,7 +37,6 @@ client.on('interactionCreate', (interaction) => {
     interaction["member"] = interaction.guild.members.cache.get(interaction.user.id);
 
     cmd.run(client, interaction)
-
   }
 })
 
@@ -68,5 +67,3 @@ fs.readdir('./Eventos', (err, file) => {
     require(`./Eventos/${event}`)
   })
 })
-
-
