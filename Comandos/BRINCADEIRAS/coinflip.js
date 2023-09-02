@@ -1,7 +1,6 @@
 const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType } = require("discord.js")
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
-// const emojis = require('../../emojis.json')
 
 module.exports = {
     name: "coinflip", // Coloque o nome do comando
