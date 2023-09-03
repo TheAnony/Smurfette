@@ -133,14 +133,15 @@ module.exports = {
       .setAuthor({ name: `Menu de ajuda, categoria: utilidade`, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
       .setFooter({ text: `/help-ajuda \u2023 Página 7/8`, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
       .setColor('#3460FF')
-      .setTitle(`- Total de comandos: ${emojis.num4}\n`)
+      .setTitle(`- Total de comandos: ${emojis.num5}\n`)
       .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setDescription(
         `[${emoji.manutencao}] ${p} \`\`Enquete:\`\` **Inicia uma enquete.**\n\n` +
         `[${emoji.indisponivel}] ${p} \`\`Gerador-de-senha:\`\` **Gera uma senha aleatória.**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Gerar-numero-aleatorio:\`\` **Gera uma número aleatória.**\n\n` +
         `[${emoji.manutencao}] ${p} \`\`Lembrete-remind:\`\` **Cria um lembrete.**\n\n` +
-        `[${emoji.indisponivel}] ${p} \`\`Report:\`\` **Reporta um usuário.**\n\n`
+        `[${emoji.indisponivel}] ${p} \`\`Report:\`\` **Reporta um usuário.**\n\n`,
+        `[${emoji.indisponivel}] ${p} \`\`Petição:\`\` **Inicia uma petição.**\n\n`
       )
 
     let embedModeração = new EmbedBuilder()
@@ -216,7 +217,7 @@ module.exports = {
           },
           {
             label: "Página 7/8",
-            description: "PÁGINA SOBRE UTILIDADE [4]",
+            description: "PÁGINA SOBRE UTILIDADE [5]",
             value: "pg7"
           },
           {
