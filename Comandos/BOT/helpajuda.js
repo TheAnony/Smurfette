@@ -45,10 +45,10 @@ module.exports = {
       .setDescription(
         `[${emoji.disponivel}] ${p} \`\`Bot-info:\`\` **Veja minhas informações.**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Help-ajuda:\`\` **Ei, é o comando que está usando!**\n\n` +
-        `[${emoji.indisponivel}] ${p} \`\`Politica-de-privacidade:\`\` **Fornece o documento de política de privacidade.**\n\n` +
+        `[${emoji.disponivel}] ${p} \`\`Politica-de-privacidade:\`\` **Fornece o documento de política de privacidade.**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Ping:\`\` **Veja o meu ping.**\n\n` +
         `[${emoji.indisponivel}] ${p} \`\`Donate:\`\` **Faça um donate e darei o meu melhor sempre!**\n\n` +
-        `[${emoji.indisponivel}] ${p} \`\`Termos-de-uso:\`\` **Fornece o documento sobre os meus termos de uso.**\n\n` +
+        `[${emoji.disponivel}] ${p} \`\`Termos-de-uso:\`\` **Fornece o documento sobre os meus termos de uso.**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Reportar-bug:\`\` **Você identificou algum bug em mim? Use esse comando para enviar ao meu criador e ele reparar o bug!**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Say:\`\` **Faça eu falar algo!**\n\n`+
         `[${emoji.indisponivel}] ${p} \`\`News:\`\` **Veja minhas últimas notícias!**\n\n`
@@ -62,7 +62,7 @@ module.exports = {
       .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setDescription(
         `[${emoji.disponivel}][${emoji.permrole}] ${p} \`\`Contagem:\`\` **Começa uma contagem numeral no canal atual.**\n\n` +
-        `[${emoji.indisponivel}] ${p} \`\`Cara-coroa:\`\` **Lança uma moeda que dá cara ou coroa.**\n\n` +
+        `[${emoji.disponivel}] ${p} \`\`Cara-coroa:\`\` **Lança uma moeda que dá cara ou coroa.**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Pedra-papel-tesoura:\`\` **Começa um jogo de pedra, papel e tesoura.**\n\n`
       )
 
@@ -101,7 +101,6 @@ module.exports = {
       .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setDescription(
         `[${emoji.disponivel}][${emoji.permrole}] ${p} \`\`Sorteio:\`\` **Começa um sorteio.**\n` +
-        `[${emoji.indisponivel}][${emoji.permrole}] ${s} \`\`Reroll:\`\` **Rolete novos ganhadores do último sorteio.**\n` +
         `[${emoji.indisponivel}][${emoji.permrole}] ${s} \`\`Edit:\`\` **Edita o último sorteio.**\n`
       )
 
