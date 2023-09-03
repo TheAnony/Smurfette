@@ -133,7 +133,7 @@ module.exports = {
       .setAuthor({ name: `Menu de ajuda, categoria: utilidade`, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
       .setFooter({ text: `/help-ajuda \u2023 Página 7/8`, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
       .setColor('#3460FF')
-      .setTitle(`- Total de comandos: ${emojis.num5}\n`)
+      .setTitle(`- Total de comandos: ${emojis.num6}\n`)
       .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setDescription(
         `[${emoji.manutencao}] ${p} \`\`Enquete:\`\` **Inicia uma enquete.**\n\n` +
@@ -217,7 +217,7 @@ module.exports = {
           },
           {
             label: "Página 7/8",
-            description: "PÁGINA SOBRE UTILIDADE [5]",
+            description: "PÁGINA SOBRE UTILIDADE [6]",
             value: "pg7"
           },
           {
