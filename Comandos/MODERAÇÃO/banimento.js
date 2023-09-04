@@ -1,4 +1,4 @@
-const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits } = require("discord.js")
+const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js")
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
 
@@ -48,8 +48,8 @@ module.exports = {
         if (!interaction.member.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content: `**Você não tem permissão de utilizar esse comando!**`, ephemeral: true })
 
         const subcommand = interaction.options.getSubcommand();
-        const User = interaction.options.getUser('member');
-        const Member = interaction.guild.members.cache.get(User.id);
+        const User = interaction.options.getUser('member') || interaction.user.id
+        const Member = interaction.guild.members.cache.get(User.id)
         const AuthorUser = interaction.user;
         const AuthorMember = interaction.member;
         const Guild = interaction.guild.id;
@@ -103,7 +103,20 @@ module.exports = {
 
             let embedsCreated = pagesCreate(bansGlobalArray)
 
-            interaction.reply({embeds: embedsCreated})
+            let painel = new ActionRowBuilder().addComponents(
+                new StringSelectMenuBuilder()
+                  .setCustomId("banPages")
+                  .setPlaceholder("Escolha a página!")
+                  .addOptions(
+                    
+                    /* {
+                      
+                      label: "Página 1/8",
+                      description: "PÁGINA SOBRE BOT [9]",
+                      value: "pg1"
+                    } */
+                  )
+              );
 
             function pagesCreate(bansArray) {
                 let pages = [];
