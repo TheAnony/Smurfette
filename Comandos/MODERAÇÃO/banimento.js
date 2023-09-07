@@ -1,6 +1,8 @@
-const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js")
+const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle } = require("discord.js")
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
+const { PaginationWrapper } = require('djs-button-pages');
+const { NextPageButton, PreviousPageButton} = require('@djs-button-pages/presets');
 
 module.exports = {
     name: "banimento", // Coloque o nome do comando
@@ -101,26 +103,22 @@ module.exports = {
 
             let bansGlobalArray = ['Guiw', 'Core', 'Anony', 'MrGuianas', 'Michael Jackson', 'Roberto Carlos', 'B4laco', 'Salame', 'Alvaro'];
 
-            let embedsCreated = pagesCreate(bansGlobalArray)
+            const embeds = embedsCreate(bansGlobalArray)
+            const buttons = [
+                new PreviousPageButton({custom_id: "prev_page", emoji: "↩️", style: ButtonStyle.Primary}),
+                new NextPageButton({custom_id: "next_page", emoji: "▶️", style: ButtonStyle.Primary}),
+            ]
 
-            let painel = new ActionRowBuilder().addComponents(
-                new StringSelectMenuBuilder()
-                  .setCustomId("banPages")
-                  .setPlaceholder("Escolha a página!")
-                  .addOptions(
-                    
-                    /* {
-                      
-                      label: "Página 1/8",
-                      description: "PÁGINA SOBRE BOT [9]",
-                      value: "pg1"
-                    } */
-                  )
-              );
+            const paginacao = new PaginationWrapper()
+                .setButtons(buttons)
+                .setEmbeds(embeds)
 
-            function pagesCreate(bansArray) {
+            await paginacao.interactionReply(interaction)
+
+            function embedsCreate(bansArray) {
                 let pages = [];
                 let currentPage = [];
+                if(typeof bansArray !== 'object') return;
 
                 for (let i = 0; i < bansArray.length; i++) {
                     currentPage.push(bansArray[i]);
@@ -128,15 +126,16 @@ module.exports = {
                     if (currentPage.length === 7 || i === bansArray.length - 1) {
                         const embed = new EmbedBuilder()
                         .setTitle(`Lista de usuários banidos:`)
-                        .setDescription(currentPage.join(`\n`));
+                        .setDescription(currentPage.join(`\n`))
+                        .setColor('DarkButNotBlack');
 
                     pages.push(embed);
                     currentPage= [];
                     };
-                }
+                };
 
                 return pages;
-            }
+            };
         }
     }
 }
