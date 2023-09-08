@@ -3,6 +3,7 @@ const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, Acti
 const ms = require('ms');
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
+const wait = require('node:timers/promises').setTimeout
 
 module.exports = {
   name: "sorteio", // Coloque o nome do comando
@@ -57,13 +58,12 @@ module.exports = {
 
     if (!interaction.member.roles.cache.some(
       role => valoresGerados.includes(role.id))
-    ) return interaction.reply('**VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**')
+    ) return interaction.reply({ephemeral: true, content: '**VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**'})
 
     let premio = interaction.options.getString("prêmio");
     let host = interaction.options.getUser("host");
     let quantiaWinner = interaction.options.getString("quantia-de-ganhadores");
-    /* let click = [] || 0; */
-    let click = ['Core', 'Guiw', 'Meleus', 'Lotado', 'Guilherme Afton', 'Etc'];
+    let click = [] || 0
     let tempoSorteio = cronos()[0];
     let tempoClaim = cronos()[1]
 
@@ -353,7 +353,7 @@ module.exports = {
             let newGanha = newWinners[i];
             let ganha = ganhadores.filter(user => !ganhadores.includes(user))
             let novosGanha = ganha[Math.floor(Math.random() * ganha.length)]
-            if(!ganhadores.includes(newGanha)) {
+            if (!ganhadores.includes(newGanha)) {
               newWinners = [];
               newWinners.push(novosGanha)
             }

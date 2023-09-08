@@ -3,7 +3,6 @@ const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBit
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
 const ms = require('ms');
-const wait = require('node:timers/promises').setTimeout
 
 module.exports = {
     name: "permrole-config", // Coloque o nome do comando
