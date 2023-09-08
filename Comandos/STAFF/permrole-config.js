@@ -163,7 +163,6 @@ module.exports = {
                 });
 
                 coletor.on("collect", async (i) => {
-                    console.log(i);
                     switch (i.customId) {
                         case 'confirm':
                             await i.deferUpdate();
