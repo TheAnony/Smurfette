@@ -1,8 +1,8 @@
 const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle } = require("discord.js")
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
-const { PaginationWrapper, getEmbedLength } = require('djs-button-pages');
-const { NextPageButton, PreviousPageButton} = require('@djs-button-pages/presets');
+const { PaginationWrapper } = require('djs-button-pages');
+const { NextPageButton, PreviousPageButton } = require('@djs-button-pages/presets');
 
 module.exports = {
     name: "banimento", // Coloque o nome do comando
@@ -101,12 +101,13 @@ module.exports = {
             /* let bansGlobalArray = Object.keys(bansGlobal);
             let embeds = pagesCreate(bansGlobalArray); */
 
-            let bansGlobalArray = ['Guiw', 'Core', 'Anony', 'MrGuianas', 'Michael Jackson', 'Roberto Carlos', 'B4laco', 'Salame', 'Alvaro'];
+            let bansGlobalArray = ['GUIW', 'B4LACO', 'SIMONY', 'ANONY', 'LOTADO', 'MELEUS'];
 
             const embeds = embedsCreate(bansGlobalArray)
+            console.log(embedsCreate(bansGlobalArray));
             const buttons = [
-                new PreviousPageButton({custom_id: "prev_page", emoji: "↩️", style: ButtonStyle.Primary}),
-                new NextPageButton({custom_id: "next_page", emoji: "▶️", style: ButtonStyle.Primary}),
+                new PreviousPageButton({ custom_id: "prev_page", emoji: "↩️", style: ButtonStyle.Primary }),
+                new NextPageButton({ custom_id: "next_page", emoji: "▶️", style: ButtonStyle.Primary }),
             ]
 
             const paginacao = new PaginationWrapper()
@@ -115,29 +116,41 @@ module.exports = {
                 .setFilterOptions({
                     allowedUsers: [interaction.user.id],
                     filterUsers: true
-                })    
+                })
+
+            console.log(paginacao);
 
             await paginacao.interactionReply(interaction)
 
             function embedsCreate(bansArray) {
                 let pages = [];
                 let currentPage = [];
-                if(typeof bansArray !== 'object') return;
+                let totaldepaginas = 1;
+                if (typeof bansArray !== 'object') return;
+
+                for (let i = 0; i < bansArray.length; i++) {
+                    currentPage.push(bansArray[i]);
+
+                    if (currentPage.length === 7 || i === bansArray.length - 1) {
+                        totaldepaginas++;
+                        currentPage = [];
+                    };
+                };
 
                 for (let i = 0; i < bansArray.length; i++) {
                     currentPage.push(bansArray[i]);
 
                     if (currentPage.length === 7 || i === bansArray.length - 1) {
                         const embed = new EmbedBuilder()
-                        .setTitle(`Lista de usuários banidos:`)
-                        .setDescription(currentPage.join(`\n`))
-                        .setColor('DarkButNotBlack');
+                            .setTitle(`Lista de usuários banidos:`)
+                            .setDescription(currentPage.join(`\n`))
+                            .setColor('DarkButNotBlack')
+                            .setFooter({ text: `Página ${pages.length + 1}/${totaldepaginas-1}` })
 
-                    pages.push(embed);
-                    currentPage= [];
+                        pages.push(embed);
+                        currentPage = [];
                     };
                 };
-
                 return pages;
             };
         }
