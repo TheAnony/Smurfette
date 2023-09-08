@@ -1,7 +1,7 @@
 const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits, ActionRowBuilder, StringSelectMenuBuilder, ButtonStyle } = require("discord.js")
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
-const { PaginationWrapper } = require('djs-button-pages');
+const { PaginationWrapper, getEmbedLength } = require('djs-button-pages');
 const { NextPageButton, PreviousPageButton} = require('@djs-button-pages/presets');
 
 module.exports = {
@@ -112,6 +112,10 @@ module.exports = {
             const paginacao = new PaginationWrapper()
                 .setButtons(buttons)
                 .setEmbeds(embeds)
+                .setFilterOptions({
+                    allowedUsers: [interaction.user.id],
+                    filterUsers: true
+                })    
 
             await paginacao.interactionReply(interaction)
 
