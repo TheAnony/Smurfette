@@ -27,7 +27,6 @@ const client = new Discord.Client({
 module.exports = client
 
 client.on('interactionCreate', (interaction) => {
-
   if (interaction.type === Discord.InteractionType.ApplicationCommand) {
 
     const cmd = client.slashCommands.get(interaction.commandName);

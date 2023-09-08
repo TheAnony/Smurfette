@@ -2,7 +2,8 @@ const { ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBit
     EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
-const ms = require('ms')
+const ms = require('ms');
+const wait = require('node:timers/promises').setTimeout
 
 module.exports = {
     name: "permrole-config", // Coloque o nome do comando
@@ -148,31 +149,38 @@ module.exports = {
                     .setEmoji("⛔")
                     .setStyle(ButtonStyle.Danger)
                     .setDisabled(true)
-                    
+
             )
             interaction.reply({ content: `**VOCÊ REALMENTE DESEJA REALIZAR ESSA AÇÃO?**`, components: [button] }).then(async (msg) => {
-                
+
                 const filter = (i) => i.user.id === interaction.user.id
                 const coletor = msg.createMessageComponentCollector({
                     filter, max: 1, time: ms('2m')
                 });
 
                 coletor.on("end", async (i) => {
-                    interaction.editReply({ components: [buttonDisabled] });
+                    await interaction.editReply({ components: [buttonDisabled] });
                 });
 
                 coletor.on("collect", async (i) => {
+                    console.log(i);
+                    switch (i.customId) {
+                        case 'confirm':
+                            await i.deferUpdate();
+                            await interaction.editReply({ components: [buttonDisabled] })
+                            await db.delete(`ArrayCargos.roles`)
+                            await interaction.followUp(`**CARGOS DELETADOS! LISTA ANTIGA:** \n${valoresGerados.join(`, \n`)}`)
+                            break;
 
-                    if (i.customId === "confirm") {
-                        interaction.editReply({ components: [buttonDisabled] })
-                        await db.delete(`ArrayCargos.roles`)
+                        case 'cancel':
+                            await i.deferUpdate();
+                            await interaction.editReply({ components: [buttonDisabled] })
+                            interaction.channel.send(`**⛔ COMANDO CANCELADO!**`)
+                            break;
 
-                        await interaction.followUp(`**CARGOS DELETADOS! LISTA ANTIGA:** \n${valoresGerados.join(`, \n`)}`)
-                    } else if (i.customId === "cancel") {
-                        interaction.editReply({ components: [buttonDisabled] })
-                        return interaction.channel.send(`**⛔ COMANDO CANCELADO!**`)
+                        default:
+                            break;
                     }
-
                 });
 
             })
