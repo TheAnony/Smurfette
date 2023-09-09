@@ -1,8 +1,10 @@
-const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits, ButtonStyle } = require("discord.js")
+const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, PermissionFlagsBits, ButtonStyle, ActionRowBuilder, ButtonBuilder } = require("discord.js")
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
 const { PaginationWrapper } = require('djs-button-pages');
 const { NextPageButton, PreviousPageButton } = require('@djs-button-pages/presets');
+const ms = require('ms');
+const { Time, pegarTempoEmMs } = require('../../funções');
 
 module.exports = {
     name: "banimento", // Coloque o nome do comando
@@ -102,6 +104,31 @@ module.exports = {
         const Guild = interaction.guild.id;
         const Channel = client.channels.cache.get('1150047974970380358')
 
+        let button = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId("confirm")
+                .setEmoji("✅")
+                .setStyle(ButtonStyle.Success),
+            new ButtonBuilder()
+                .setCustomId("cancel")
+                .setEmoji("⛔")
+                .setStyle(ButtonStyle.Danger)
+        )
+
+        let buttonDisabled = new ActionRowBuilder().addComponents(
+            new ButtonBuilder()
+                .setCustomId("confirm")
+                .setEmoji("✅")
+                .setStyle(ButtonStyle.Success)
+                .setDisabled(true),
+            new ButtonBuilder()
+                .setCustomId("cancel")
+                .setEmoji("⛔")
+                .setStyle(ButtonStyle.Danger)
+                .setDisabled(true)
+
+        )
+
         let bans = await interaction.guild.bans.fetch()
         let bansGlobal = bans.map(map => {
             return `**Usuário:** ${map.user.username} (${map.user.id})
@@ -144,13 +171,59 @@ module.exports = {
             const member = interaction.guild.members.cache.get(user.id);
             const motivo = interaction.options.getString('motivo-temp') || 'Indefinido'
             const time = interaction.options.getString('tempo');
+            const emojis = require('../../emojis.json')
+
             let tempo = pegarTempoEmMs(time)
-            if(tempo === 'err') return interaction.reply({ephemeral: true, content: `**:x: | Tempo inválido!**`})
+            console.log(tempo);
+            let tempoCompleto = Time(tempo)
+            console.log(tempoCompleto);
+
+            if (tempo === 'err') return interaction.reply({ ephemeral: true, content: `**:x: | Tempo inválido!**` })
+            let messageEspecial = await db.get(`messageBan_${interaction.user.id}`)
 
             if (member.id === interaction.user.id) return interaction.reply({ ephemeral: true, content: '**:x: | Você não pode banir a si mesmo!**' });
+            if (member.id === client.user.id) return interaction.reply({ ephemeral: true, content: `Ei, não posso banir a mim mesma!` })
+
+            interaction.reply({
+                embeds: [
+                    new EmbedBuilder()
+                        .setColor('Red')
+                        .setTitle(`Banimento Temporário Aplicado`)
+                        .addFields(
+                            {
+                                name: `${member.user.bot ? emojis.bot : emojis.user} | ${!member.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\u2800\u2a65 Tempo: ${tempoCompleto}`
+                            }
+                        )
+                        /* .setDescription(`### ${!member.bot ? emojis.bot : emojis.user} | ${!member.bot ? 'Usuário banido:' : 'Bot banido:'}\n\u2800\u2a65${!member.bot ? 'Usuário:' : 'Bot:'} ${member.username} (${member.id})\n\u2800\u2a65`) */
+                        .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
+
+                ]
+            })
+
+            return
 
             member.ban({ reason: [motivo] }).then(() => {
-                interaction.reply(`✅ | O membro ${user.username} foi banido com sucesso durante`)
+                interaction.reply(`✅ | O membro ${user.username} foi banido com sucesso!`)
+
+                if (messageEspecial) {
+                    interaction.channel.send({
+                        embeds: [
+                            new EmbedBuilder()
+                                .setColor('Red')
+                                .setTitle(`Banimento Temporário Aplicado`)
+                                .addFields(
+                                    {
+                                        name: `${!member.bot ? emojis.bot : emojis.user} | ${!member.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65${!member.bot ? 'Usuário:' : 'Bot:'} ${member.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}`
+                                    }
+                                )
+                                /* .setDescription(`### ${!member.bot ? emojis.bot : emojis.user} | ${!member.bot ? 'Usuário banido:' : 'Bot banido:'}\n\u2800\u2a65${!member.bot ? 'Usuário:' : 'Bot:'} ${member.username} (${member.id})\n\u2800\u2a65`) */
+                                .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
+
+                        ]
+                    })
+                } else {
+
+                }
             })
 
         };

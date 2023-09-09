@@ -398,9 +398,9 @@ module.exports = {
     function time(d, h, m, s) {
       let coreDasAntigas;
       d != 0 ? coreDasAntigas = (`${d} dia${d > 1 ? 's' : ''}`) : null
-      h != 0 ? coreDasAntigas = (` ${h} hor${h > 1 ? 's' : ''}`) : null
+      h != 0 ? coreDasAntigas = (` ${h} hora${h > 1 ? 's' : ''}`) : null
       m != 0 ? coreDasAntigas = (` ${m} minuto${m > 1 ? 's' : ''}`) : null
-      coreDasAntigas = (`${s} segundo${s > 1 ? 's' : ''}.`)
+      s != 0 ? coreDasAntigas = (`${s} segundo${s > 1 ? 's' : ''}.`) : null
       return coreDasAntigas
     }
   }

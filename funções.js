@@ -1,7 +1,9 @@
+const ms = require('ms');
+
 function pegarDataNow() {
     const date = new Date();
     const dia = date.getDate() < 10 ? '0' + date.getDate() : date.getDate()
-    const mes = date.getMonth()+1 < 10 ? `0${date.getMonth()+1}` : date.getMonth()
+    const mes = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth()
     const ano = date.getFullYear();
     const hora = date.getHours();
     const minuto = date.getMinutes();
@@ -33,4 +35,19 @@ function pegarTempoCompleto(tempo) {
     return [dias, horas, minutos, segundos]
 }
 
-module.exports = { pegarDataNow, pegarTempoEmMs, pegarTempoCompleto };
+function Time(tempo) {
+    let d = Math.floor(tempo / 86400000)
+    let h = Math.floor(tempo / 3600000) % 24
+    let m = Math.floor(tempo / 60000) % 60
+    let s = Math.floor(tempo / 1000) % 60
+    console.log(m);
+
+    let coreDasAntigas;
+    d != 0 ? coreDasAntigas = (`${d} dia${d > 1 ? 's' : ''}`) : null
+    h != 0 ? coreDasAntigas = (` ${h} hora${h > 1 ? 's' : ''}`) : null
+    m != 0 ? coreDasAntigas = (` ${m} minuto${m > 1 ? 's' : ''}`) : null
+    s != 0 ? coreDasAntigas = (`${s} segundo${s > 1 ? 's' : ''}.`) : null
+    return coreDasAntigas
+}
+
+module.exports = { pegarDataNow, pegarTempoEmMs, pegarTempoCompleto, Time };
