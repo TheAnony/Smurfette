@@ -42,6 +42,11 @@ module.exports = {
                     description: `Mostra todos os banimentos e seus respectivos punidores.`,
                     type: ApplicationCommandOptionType.Subcommand,
                 },
+                {
+                    name: 'config-ban-message',
+                    description: `Mostra todos os banimentos e seus respectivos punidores.`,
+                    type: ApplicationCommandOptionType.Subcommand,
+                },
             ]
         },
     ],
@@ -81,6 +86,10 @@ module.exports = {
                 banList();
                 break;
 
+            case 'config-ban-message':
+                banMessage();
+                break;
+                
             default:
                 break;
         };
