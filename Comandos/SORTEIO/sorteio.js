@@ -3,6 +3,7 @@ const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, Acti
 const ms = require('ms');
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
+const wait = require('node:timers/promises').setTimeout
 
 module.exports = {
   name: "sorteio", // Coloque o nome do comando
@@ -57,12 +58,12 @@ module.exports = {
 
     if (!interaction.member.roles.cache.some(
       role => valoresGerados.includes(role.id))
-    ) return interaction.reply('**VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**')
+    ) return interaction.reply({ephemeral: true, content: '**VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**'})
 
     let premio = interaction.options.getString("prêmio");
     let host = interaction.options.getUser("host");
     let quantiaWinner = interaction.options.getString("quantia-de-ganhadores");
-    let click = [] || 0;
+    let click = [] || 0
     let tempoSorteio = cronos()[0];
     let tempoClaim = cronos()[1]
 
@@ -114,8 +115,7 @@ module.exports = {
       .setColor("Red")
       .setDescription(`Não foi possível promover o soteio!`);
 
-    if (await db.get(`sorteioIniciado`) ? true : false) return interaction.reply(`**UM SORTEIO JÁ ESTÁ OCORRENDO! ESPERE O ÚLTIMO SORTEIO FINALIZAR ANTES DE COMEÇAR OUTRO!**`)
-    if (host.bot) return interaction.reply(`**O host não pode ser um bot! Utilize novamente o comando.\n\`Bot mencionado como host: ${host}\`**`)
+    if (host.bot) return interaction.reply(`**O host não pode ser um bot! Utilize novamente o comando.\n\`Bot mencionado como host: \`${host}**`)
 
     let mensagem = await interaction.reply({ embeds: [embed], components: [button] }).catch((e) => {
       interaction.editReply({ embeds: [erro] });
@@ -178,7 +178,8 @@ module.exports = {
 
         case "cancel":
           if (i.member.roles.cache.some(role => valoresGerados.includes(role.id))) {
-            interaction.editReply({
+            await i.deferUpdate();
+            await interaction.editReply({
               embeds: [
                 new EmbedBuilder()
                   .setDescription(
@@ -306,12 +307,16 @@ module.exports = {
       });
 
     })
+
+    // Reroll command
     coll.on("collect", async (i) => {
       if (i.member.roles.cache.some(role => valoresGerados.includes(role.id)) && i.customId === 'reroll') {
         let ganhadores = await db.get(`ganhadorSorteio.ganhadores`)
-        if (click.length == 0 || !ganhadores) return
-
+        if (typeof ganhadores === 'object') ganhadores = ganhadores.flat()
+        if (click.length == 0 || !ganhadores) return;
         if (quantiaWinner == '1') {
+          let ganhadores = await db.get(`ganhadorSorteio.ganhadores`)
+          ganhadores = ganhadores.flat()
           let tripleAgent = click.filter(id => id !== ganhadores[0])
           let newWinner = tripleAgent[Math.floor(Math.random() * tripleAgent.length)]
           await db.set(`host`, host.id)
@@ -320,9 +325,16 @@ module.exports = {
             ganhadores: [newWinner]
           })
 
-          await interaction.followUp(`**Novo ganhador: ${newWinner}**`)
+          await i.deferUpdate()
+          await interaction.followUp(`**Novo ganhador: <@${newWinner}>**`)
+
         } else {
+          let ganhadores = await db.get(`ganhadorSorteio.ganhadores`)
+          if (typeof ganhadores === 'object') ganhadores = ganhadores.flat()
           let tripleAgent = click.filter(id => !ganhadores.includes(id))
+          if (typeof tripleAgent === 'object') tripleAgent = tripleAgent.flat()
+          console.log(tripleAgent);
+          console.log(ganhadores);
           let newWinners = tripleAgent[Math.floor(Math.random() * tripleAgent.length)]
           let w = [];
           let winners = [];
@@ -332,22 +344,32 @@ module.exports = {
             let ganhadores = tripleAgent[Math.floor(Math.random() * tripleAgent.length)]
             if (!winners.includes(ganhadores)) winners.push(ganhadores);
           }
-  
+
           winners.forEach(e => {
             w.push(`<@!${e}>`)
           });
-          
+
+          for (let i = 0; i < ganhadores.length; i++) {
+            let newGanha = newWinners[i];
+            let ganha = ganhadores.filter(user => !ganhadores.includes(user))
+            let novosGanha = ganha[Math.floor(Math.random() * ganha.length)]
+            if (!ganhadores.includes(newGanha)) {
+              newWinners = [];
+              newWinners.push(novosGanha)
+            }
+          }
+
           await db.set(`host`, host.id)
           await db.set(`tempoClaim`, tempoClaim)
           await db.set(`ganhadorSorteio`, {
-            ganhadores: [newWinners]
+            ganhadores: newWinners
           })
 
+          await i.deferUpdate()
           await interaction.followUp(`**Novos ganhadores: ${w.join(', ')}**`)
         }
       }
     })
-
 
     function cronos() {
       let tempSC = interaction.options.getString('tempo-sorteio-e-claim').toLowerCase()

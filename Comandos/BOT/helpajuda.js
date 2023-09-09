@@ -155,6 +155,7 @@ module.exports = {
         `[${emoji.indisponivel}] ${s} \`\`BanPermanente:\`\` **Aplica um banimento permanente a um membro. Sem voltas!**\n` +
         `[${emoji.indisponivel}] ${s} \`\`Unban:\`\` **Retira o banimento de um membro.**\n\n` +
         `[${emoji.indisponivel}] ${s} \`\`BanList:\`\` **Fornece a lista dos membros banidos do servidor.**\n\n` +
+        `[${emoji.indisponivel}] ${s} \`\`ConfigBanMessage:\`\` **Configura a mensagem que aparecerá quando um usuário for banido.**\n\n` +
 
         `[${emoji.indisponivel}] ${p} \`\`Kick:\`\` **Expulsa um membro do servidor.**\n\n` +
 

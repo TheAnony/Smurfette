@@ -102,9 +102,10 @@ module.exports = {
         const Guild = interaction.guild.id;
         const Channel = client.channels.cache.get('1150047974970380358')
 
-        let bansGlobal = await db.get(`bansGlobal_${Guild}.bans`)
-        if (!bansGlobal) bansGlobal = await db.set(`bansGlobal_${Guild}`, {
-            bans: {}
+        let bans = await interaction.guild.bans.fetch()
+        let bansGlobal = bans.map(map => {
+            return `**Usuário:** ${map.user.username} (${map.user.id})
+        **Motivo de banimento:** ${map.reason}`
         })
         let bansForId = bans.map(map => {
             return `${map.user.id}`
@@ -128,6 +129,10 @@ module.exports = {
 
             case 'ban-list':
                 banList();
+                break;
+
+            case 'config-ban-message':
+                banMessage();
                 break;
 
             default:
@@ -159,47 +164,53 @@ module.exports = {
         };
 
         async function banList() {
-            /* let bansGlobalArray = Object.keys(bansGlobal);
-            let embeds = pagesCreate(bansGlobalArray); */
+            const embeds = embedsCreate(bansGlobal)
+            const buttons = [
+                new PreviousPageButton({ custom_id: "prev_page", emoji: "↩️", style: ButtonStyle.Primary }),
+                new NextPageButton({ custom_id: "next_page", emoji: "▶️", style: ButtonStyle.Primary }),
+            ]
 
-            let bansGlobalArray = ['Guiw', 'Core', 'Anony', 'MrGuianas', 'Michael Jackson', 'Roberto Carlos', 'B4laco', 'Salame', 'Alvaro'];
+            const paginacao = new PaginationWrapper()
+                .setButtons(buttons)
+                .setEmbeds(embeds)
+                .setFilterOptions({
+                    allowedUsers: [interaction.user.id],
+                    filterUsers: true
+                })
 
-            let embedsCreated = pagesCreate(bansGlobalArray)
+            await paginacao.interactionReply(interaction)
 
-            let painel = new ActionRowBuilder().addComponents(
-                new StringSelectMenuBuilder()
-                  .setCustomId("banPages")
-                  .setPlaceholder("Escolha a página!")
-                  .addOptions(
-                    
-                    /* {
-                      
-                      label: "Página 1/8",
-                      description: "PÁGINA SOBRE BOT [9]",
-                      value: "pg1"
-                    } */
-                  )
-              );
-
-            function pagesCreate(bansArray) {
+            function embedsCreate(bansArray) {
                 let pages = [];
                 let currentPage = [];
+                let totaldepaginas = 1;
+                if (typeof bansArray !== 'object') return;
+
+                for (let i = 0; i < bansArray.length; i++) {
+                    currentPage.push(bansArray[i]);
+
+                    if (currentPage.length === 7 || i === bansArray.length - 1) {
+                        totaldepaginas++;
+                        currentPage = [];
+                    };
+                };
 
                 for (let i = 0; i < bansArray.length; i++) {
                     currentPage.push(bansArray[i]);
 
                     if (currentPage.length === 7 || i === bansArray.length - 1) {
                         const embed = new EmbedBuilder()
-                        .setTitle(`Lista de usuários banidos:`)
-                        .setDescription(currentPage.join(`\n`));
+                            .setTitle(`Lista de usuários banidos:`)
+                            .setDescription(`${currentPage.join(`\n\n`)}`)
+                            .setColor('DarkButNotBlack')
+                            .setFooter({ text: `Página ${pages.length + 1}/${totaldepaginas - 1}` })
 
-                    pages.push(embed);
-                    currentPage= [];
+                        pages.push(embed);
+                        currentPage = [];
                     };
-                }
-
+                };
                 return pages;
-            }
+            };
         }
 
         async function banMessage() {

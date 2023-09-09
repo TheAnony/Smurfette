@@ -14,6 +14,7 @@
     "canvas": "^2.11.2",
     "cpu-stat": "^2.0.1",
     "discord.js": "^14.11.0",
+    "djs-button-pages": "^4.0.1",
     "express": "^4.18.2",
     "fs": "^0.0.1-security",
     "generate-password": "^1.7.0",
