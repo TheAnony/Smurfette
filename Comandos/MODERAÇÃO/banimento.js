@@ -61,9 +61,10 @@ module.exports = {
         const AuthorMember = interaction.member;
         const Guild = interaction.guild.id;
 
-        let bansGlobal = await db.get(`bansGlobal_${Guild}.bans`)
-        if (!bansGlobal) bansGlobal = await db.set(`bansGlobal_${Guild}`, {
-            bans: {}
+        let bans = await interaction.guild.bans.fetch()
+        let bansGlobal = bans.map(map => {
+            return `**Usuário:** ${map.user.username} (${map.user.id})
+        **Motivo de banimento:** ${map.reason}`
         })
 
         let banCountMod = await db.get(`banCountMod_${AuthorUser.id}`);
@@ -89,7 +90,7 @@ module.exports = {
             case 'config-ban-message':
                 banMessage();
                 break;
-                
+
             default:
                 break;
         };
@@ -107,13 +108,7 @@ module.exports = {
         };
 
         async function banList() {
-            /* let bansGlobalArray = Object.keys(bansGlobal);
-            let embeds = pagesCreate(bansGlobalArray); */
-
-            let bansGlobalArray = ['GUIW', 'B4LACO', 'SIMONY', 'ANONY', 'LOTADO', 'MELEUS'];
-
-            const embeds = embedsCreate(bansGlobalArray)
-            console.log(embedsCreate(bansGlobalArray));
+            const embeds = embedsCreate(bansGlobal)
             const buttons = [
                 new PreviousPageButton({ custom_id: "prev_page", emoji: "↩️", style: ButtonStyle.Primary }),
                 new NextPageButton({ custom_id: "next_page", emoji: "▶️", style: ButtonStyle.Primary }),
@@ -126,8 +121,6 @@ module.exports = {
                     allowedUsers: [interaction.user.id],
                     filterUsers: true
                 })
-
-            console.log(paginacao);
 
             await paginacao.interactionReply(interaction)
 
@@ -152,9 +145,9 @@ module.exports = {
                     if (currentPage.length === 7 || i === bansArray.length - 1) {
                         const embed = new EmbedBuilder()
                             .setTitle(`Lista de usuários banidos:`)
-                            .setDescription(currentPage.join(`\n`))
+                            .setDescription(`${currentPage.join(`\n\n`)}`)
                             .setColor('DarkButNotBlack')
-                            .setFooter({ text: `Página ${pages.length + 1}/${totaldepaginas-1}` })
+                            .setFooter({ text: `Página ${pages.length + 1}/${totaldepaginas - 1}` })
 
                         pages.push(embed);
                         currentPage = [];

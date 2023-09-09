@@ -8,3 +8,5 @@ function pegarDataNow() {
 
     return `${dia}/${mes}/${ano}, às ${hora}h${minuto}min.`
 }
+
+module.exports = { pegarDataNow };
