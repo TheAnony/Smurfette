@@ -11,43 +11,97 @@ function pegarDataNow() {
     return `${dia}/${mes}/${ano}, às ${hora}h${minuto}min.`
 }
 
-function pegarTempoEmMs(tempo) {
-    let tempAlterado = tempo.trim().split(/ +/g)
-    if (tempAlterado.length !== 2) return `err`
-    let tempoS = tempAlterado[0] + tempAlterado[1]
-    let time = [];
-    let tempo2Digitos = ms(tempoS.slice(0, 3));
-    let tempo1Digito = ms(tempoS.slice(0, 2));
-
-    let condição1 = typeof tempo2Digitos === 'number' ? time.push(tempo2Digitos) : typeof tempo1Digito === 'number' ? time.push(tempo1Digito) : 'tempo inválido'
-
-    if (condição1 == 'tempo inválido') return `err`
-
-    return time
+function convertTimeStringToList(timeString) {
+    // Regular expression pattern to match time units.
+    var pattern = /(\d+)([a-z]+)/g;
+    // Find all matches of the pattern in the time string.
+    var matches = timeString.match(pattern);
+    // Convert the matches to a list of time units.
+    var timeUnits = [];
+    for (let i = 0; i < matches.length; i++) {
+            // Split each match into the quantity and the unit.
+            var match = matches[i].match(/(\d+)([a-z]+)/);
+            timeUnits.push(match[1]);  // Quantity
+            timeUnits.push(match[2]);  // Unit
+    }
+    return timeUnits;
 }
 
-function pegarTempoCompleto(tempo) {
-    const dias = Math.floor(tempo / 86400000)
-    const horas = Math.floor(tempo / 3600000) % 24
-    const minutos = Math.floor(tempo / 60000) % 60
-    const segundos = Math.floor(tempo / 1000) % 60
+function StringToMilliseonds(timeString) {
+    // Define the milliseconds equivalents for each time unit
+    const millisecondsInYear = 31_536_000_000;
+    const millisecondsInMonth = 2_628_000_000;
+    const millisecondsInDay = 86_400_000;
+    const millisecondsInHour = 3_600_000;
+    const millisecondsInMinute = 60_000;
+    const millisecondsInSecond = 1_000;
+    let timeUnits = timeString.toLowerCase().split(' ');
 
-    return [dias, horas, minutos, segundos]
+    const regex = /[a-zA-Z]/;
+    const str = timeUnits[0]
+    const resultado = regex.test(str)
+    if (resultado === true) timeUnits = convertTimeStringToList(timeString)
+
+    let totalMilliseconds = 0;
+
+    for (let i = 0; i < timeUnits.length; i += 2) {
+            const unit = timeUnits[i + 1];
+            switch (unit) {
+                    case 'years':
+                    case 'anos':
+                    case 'year':
+                    case 'ano':
+                    case 'y':
+                            totalMilliseconds += parseInt(timeUnits[i]) * millisecondsInYear;
+                            break;
+                    case 'months':
+                    case 'meses':
+                    case 'month':
+                    case 'mês':
+                    case 'm':
+                            totalMilliseconds += parseInt(timeUnits[i]) * millisecondsInMonth;
+                            break;
+                    case 'days':
+                    case 'dias':
+                    case 'day':
+                    case 'dia':
+                    case 'd':
+                            totalMilliseconds += parseInt(timeUnits[i]) * millisecondsInDay;
+                            break;
+                    case 'hours':
+                    case 'horas':
+                    case 'hour':
+                    case 'hrs':
+                    case 'hora':
+                    case 'hr':
+                    case 'h':
+                            totalMilliseconds += parseInt(timeUnits[i]) * millisecondsInHour;
+                            break;
+                    case 'minutes':
+                    case 'minutos':
+                    case 'minute':
+                    case 'minuto':
+                    case 'min':
+                    case 'mnt':
+                            totalMilliseconds += parseInt(timeUnits[i]) * millisecondsInMinute;
+                            break;
+                    case 'seconds':
+                    case 'segundos':
+                    case 'sgs':
+                    case 'second':
+                    case 'segundo':
+                    case 's':
+                    case 'sg':
+                            totalMilliseconds += parseInt(timeUnits[i]) * millisecondsInSecond;
+                            break;
+                    default:
+            }
+    }
+    return totalMilliseconds;
 }
 
-function Time(tempo) {
-    let d = Math.floor(tempo / 86400000)
-    let h = Math.floor(tempo / 3600000) % 24
-    let m = Math.floor(tempo / 60000) % 60
-    let s = Math.floor(tempo / 1000) % 60
-    console.log(m);
-
-    let coreDasAntigas;
-    d != 0 ? coreDasAntigas = (`${d} dia${d > 1 ? 's' : ''}`) : null
-    h != 0 ? coreDasAntigas = (` ${h} hora${h > 1 ? 's' : ''}`) : null
-    m != 0 ? coreDasAntigas = (` ${m} minuto${m > 1 ? 's' : ''}`) : null
-    s != 0 ? coreDasAntigas = (`${s} segundo${s > 1 ? 's' : ''}.`) : null
-    return coreDasAntigas
+function millisecondsToString(timeMil) {
+    
 }
 
-module.exports = { pegarDataNow, pegarTempoEmMs, pegarTempoCompleto, Time };
+module.exports = { pegarDataNow, StringToMilliseonds };
