@@ -23,7 +23,7 @@ function convertTimeStringToList(timeString) {
         return timeUnits;
 }
 
-function StringToMilliseonds(timeString) {
+function stringMS(timeString) {
         const millisecondsInYear = 31_536_000_000;
         const millisecondsInMonth = 2_628_000_000;
         const millisecondsInDay = 86_400_000;
@@ -103,8 +103,25 @@ function StringToMilliseonds(timeString) {
         return totalMilliseconds;
 }
 
-function millisecondsToString(timeMil) {
+function formatTime(milliseconds) {
+        const timeUnits = {
+          'ano': 31_536_000_000,
+          'mês': 2_628_000_000,
+          'dia': 86_400_000,
+          'hora': 3_600_000,
+          'minuto': 60000,
+          'segundo': 1000
+        };
+        let formattedTime = "";
+        for (unit in timeUnits) {
+          if (milliseconds >= timeUnits[unit]) {
+            const count = Math.floor(milliseconds / timeUnits[unit]);
+            formattedTime += `${count} ${unit}${count > 1 ? "s" : ""} `;
+            milliseconds %= timeUnits[unit];
+          }
+        }
+        formattedTime.includes('mêss') ? formattedTime = formattedTime.replace('mêss', 'meses') : null
+        return formattedTime.trim();
+      }
 
-}
-
-module.exports = { pegarDataNow, StringToMilliseonds };
+module.exports = { pegarDataNow, stringMS, formatTime };
