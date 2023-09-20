@@ -30,7 +30,7 @@ function StringToMilliseonds(timeString) {
         const millisecondsInHour = 3_600_000;
         const millisecondsInMinute = 60_000;
         const millisecondsInSecond = 1_000;
-        let timeUnits = timeString.toLowerCase().split(/ +/g)
+        let timeUnits = timeString.toLowerCase().trim().split(/ +/g)
         const regex = /^(?=.*[a-zA-Z])(?=.*\d).+$/;
         let ElementsFilter = [];
 
