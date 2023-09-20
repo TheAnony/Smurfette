@@ -3,8 +3,7 @@ const { QuickDB } = require('quick.db')
 const db = new QuickDB();
 const { PaginationWrapper } = require('djs-button-pages');
 const { NextPageButton, PreviousPageButton } = require('@djs-button-pages/presets');
-const ms = require('ms');
-const { Time, pegarTempoEmMs } = require('../../funções');
+const { stringMS, formatTime, pegarDataNow } = require('../../funções');
 
 module.exports = {
     name: "banimento", // Coloque o nome do comando
@@ -173,10 +172,8 @@ module.exports = {
             const time = interaction.options.getString('tempo');
             const emojis = require('../../emojis.json')
 
-            let tempo = pegarTempoEmMs(time)
-            console.log(tempo);
-            let tempoCompleto = Time(tempo)
-            console.log(tempoCompleto);
+            let tempo = stringMS(time)
+            let tempoCompleto = formatTime(tempo)
 
             if (tempo === 'err') return interaction.reply({ ephemeral: true, content: `**:x: | Tempo inválido!**` })
             let messageEspecial = await db.get(`messageBan_${interaction.user.id}`)
@@ -191,11 +188,16 @@ module.exports = {
                         .setTitle(`Banimento Temporário Aplicado`)
                         .addFields(
                             {
-                                name: `${member.user.bot ? emojis.bot : emojis.user} | ${!member.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\u2800\u2a65 Tempo: ${tempoCompleto}`
+                                name:
+                                    `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\u2800\u2a65 Tempo: ${tempoCompleto}\n\n`
+                            },
+                            {
+                                name:
+                                    `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: ${banCountMod}`
                             }
                         )
-                        /* .setDescription(`### ${!member.bot ? emojis.bot : emojis.user} | ${!member.bot ? 'Usuário banido:' : 'Bot banido:'}\n\u2800\u2a65${!member.bot ? 'Usuário:' : 'Bot:'} ${member.username} (${member.id})\n\u2800\u2a65`) */
                         .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
+                        .setFooter({text: `🕒 | ${pegarDataNow()}`})
 
                 ]
             })

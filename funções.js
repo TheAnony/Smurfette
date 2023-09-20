@@ -8,7 +8,7 @@ function pegarDataNow() {
         const hora = date.getHours();
         const minuto = date.getMinutes();
 
-        return `${dia}/${mes}/${ano}, às ${hora}h${minuto}min.`
+        return `${dia}/${mes}/${ano}, às ${hora}h${minuto}min`
 }
 
 function convertTimeStringToList(timeString) {
