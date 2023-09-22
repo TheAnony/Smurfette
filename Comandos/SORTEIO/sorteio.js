@@ -4,6 +4,7 @@ const ms = require('ms');
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
 const wait = require('node:timers/promises').setTimeout
+const { formatTime, stringMS, getSorteioClaim } = require('../../funções')
 
 module.exports = {
   name: "sorteio", // Coloque o nome do comando
@@ -19,7 +20,7 @@ module.exports = {
     {
       name: "tempo-sorteio-e-claim",
       type: ApplicationCommandOptionType.String,
-      description: "Utilize este modelo: (tempo do sorteio) (tempo de claim). Exemplo: 10 minutos 30 minutos.",
+      description: "Utilize este modelo: sorteio: (tempo) claim: (tempo).",
       required: true
     },
     {
@@ -64,18 +65,16 @@ module.exports = {
     let host = interaction.options.getUser("host");
     let quantiaWinner = interaction.options.getString("quantia-de-ganhadores");
     let click = [] || 0
-    let tempoSorteio = cronos()[0];
-    let tempoClaim = cronos()[1]
+    let time = interaction.options.getString('tempo-sorteio-e-claim')
 
-    const diasSorteio = Math.floor(tempoSorteio / 86400000)
-    const horasSorteio = Math.floor(tempoSorteio / 3600000) % 24
-    const minutosSorteio = Math.floor(tempoSorteio / 60000) % 60
-    const segundosSorteio = Math.floor(tempoSorteio / 1000) % 60
+    let sorteioString = getSorteioClaim(time).sorteio
+    let claimString = getSorteioClaim(time).claim
 
-    const diasClaim = Math.floor(tempoClaim / 86400000)
-    const horasClaim = Math.floor(tempoClaim / 3600000) % 24
-    const minutosClaim = Math.floor(tempoClaim / 60000) % 60
-    const segundosClaim = Math.floor(tempoClaim / 1000) % 60
+    let tempoSorteio = stringMS(sorteioString)
+    let tempoClaim = stringMS(claimString)
+
+    let sorteioCompleto = formatTime(tempoSorteio);
+    let claimCompleto = formatTime(tempoClaim)
 
     let button = new ActionRowBuilder().addComponents(
       new ButtonBuilder()
@@ -103,8 +102,8 @@ module.exports = {
         `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
         `\`Quantia de ganhadores:\` ${quantiaWinner}\n` +
         `\`Entradas:\` 0\n\n` +
-        `\`Tempo do sorteio:\` ${time(diasSorteio, horasSorteio, minutosSorteio, segundosSorteio)}\n` +
-        `\`Tempo de claim:\` ${time(diasClaim, horasClaim, minutosClaim, segundosClaim)}\n` +
+        `\`Tempo do sorteio:\` ${sorteioCompleto}\n` +
+        `\`Tempo de claim:\` ${claimCompleto}\n` +
         `Clique no botão para participar.\n**Boa sorte!!!**`
       )
       .setTimestamp(Date.now() + tempoSorteio)
@@ -163,8 +162,8 @@ module.exports = {
               `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
               `\`Quantia de ganhadores:\` ${quantiaWinner}\n` +
               `\`Entradas:\` ${click.length}\n\n` +
-              `\`Tempo do sorteio:\` ${time(diasSorteio, horasSorteio, minutosSorteio, segundosSorteio)}\n` +
-              `\`Tempo de claim:\` ${time(diasClaim, horasClaim, minutosClaim, segundosClaim)}\n` +
+              `\`Tempo do sorteio:\` ${sorteioCompleto}\n` +
+              `\`Tempo de claim:\` ${claimCompleto}\n` +
               `Clique no botão para participar.\n**Boa sorte!!!**`
             )
             .setTimestamp(Date.now() + tempoSorteio)
@@ -188,8 +187,8 @@ module.exports = {
                     `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
                     `\`Quantia de ganhadores:\` ${quantiaWinner}\n` +
                     `\`Entradas:\` ${click.length}\n` +
-                    `\`Tempo do sorteio:\` ${time(diasSorteio, horasSorteio, minutosSorteio, segundosSorteio)}\n` +
-                    `\`Tempo de claim:\` ${time(diasClaim, horasClaim, minutosClaim, segundosClaim)}\n` +
+                    `\`Tempo do sorteio:\` ${sorteioCompleto}\n` +
+                    `\`Tempo de claim:\` ${claimCompleto}\n` +
                     `Clique no botão para participar.\n**Boa sorte!!!**`)
               ], content: `**SORTEIO CANCELADO!**`, components: [
                 new ActionRowBuilder().addComponents(
@@ -370,38 +369,5 @@ module.exports = {
         }
       }
     })
-
-    function cronos() {
-      let tempSC = interaction.options.getString('tempo-sorteio-e-claim').toLowerCase()
-      let tempAlterado = tempSC.trim().split(/ +/g)
-      if (tempAlterado.length !== 4) return interaction.reply({ content: `**TEMPO INVÁLIDO!**`, ephemeral: true })
-      let tempoS = tempAlterado[0] + tempAlterado[1]
-      let tempoC = tempAlterado[2] + tempAlterado[3]
-      let time = [];
-      let sorteio2Digitos = ms(tempoS.slice(0, 3));
-      let sorteio1Digito = ms(tempoS.slice(0, 2));
-      let claim2Digitos = ms(tempoC.slice(0, 3));
-      let claim1Digito = ms(tempoC.slice(0, 2));
-
-      let condição1 = typeof sorteio2Digitos === 'number' ? time.push(sorteio2Digitos) : typeof sorteio1Digito === 'number' ? time.push(sorteio1Digito) : 'tempo sorteio inválido'
-      let condição2 = typeof claim2Digitos === 'number' ? time.push(claim2Digitos) : typeof claim1Digito === 'number' ? time.push(claim1Digito) : 'tempo claim inválido'
-
-      if (condição1 == 'tempo sorteio inválido') {
-        return interaction.reply({ content: `[❌] Tempo de sorteio`, ephemeral: true })
-      } else if (condição2 == 'tempo claim inválido') {
-        return interaction.reply({ content: `[❌] Tempo de claim`, ephemeral: true })
-      }
-
-      return time
-    }
-
-    function time(d, h, m, s) {
-      let coreDasAntigas;
-      d != 0 ? coreDasAntigas = (`${d} dia${d > 1 ? 's' : ''}`) : null
-      h != 0 ? coreDasAntigas = (` ${h} hora${h > 1 ? 's' : ''}`) : null
-      m != 0 ? coreDasAntigas = (` ${m} minuto${m > 1 ? 's' : ''}`) : null
-      s != 0 ? coreDasAntigas = (`${s} segundo${s > 1 ? 's' : ''}.`) : null
-      return coreDasAntigas
-    }
   }
 }
