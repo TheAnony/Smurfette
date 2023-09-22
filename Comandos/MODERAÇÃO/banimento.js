@@ -16,31 +16,6 @@ module.exports = {
             type: ApplicationCommandOptionType.SubcommandGroup,
             options: [
                 {
-                    name: 'ban-temporario',
-                    description: `Aplica um banimento temporário a um membro.`,
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'member-temp',
-                            description: `Mencione o membro.`,
-                            type: ApplicationCommandOptionType.User,
-                            required: true,
-                        },
-                        {
-                            name: 'tempo',
-                            description: 'Informe o período do banimento temporário. (s/m/h/d)',
-                            type: ApplicationCommandOptionType.String,
-                            required: true
-                        },
-                        {
-                            name: 'motivo-temp',
-                            description: 'Informe o motivo.',
-                            type: ApplicationCommandOptionType.String,
-                            required: false
-                        },
-                    ]
-                },
-                {
                     name: 'ban-permanente',
                     description: `Aplica um banimento parmenente a um membro.`,
                     type: ApplicationCommandOptionType.Subcommand,
@@ -163,71 +138,6 @@ module.exports = {
 
             default:
                 break;
-        };
-
-        async function banTemp() {
-            const user = interaction.options.getUser('member-temp');
-            const member = interaction.guild.members.cache.get(user.id);
-            const motivo = interaction.options.getString('motivo-temp') || 'Indefinido'
-            const time = interaction.options.getString('tempo');
-            const emojis = require('../../emojis.json')
-
-            let tempo = stringMS(time)
-            let tempoCompleto = formatTime(tempo)
-
-            if (tempo === 'err') return interaction.reply({ ephemeral: true, content: `**:x: | Tempo inválido!**` })
-            let messageEspecial = await db.get(`messageBan_${interaction.user.id}`)
-
-            if (member.id === interaction.user.id) return interaction.reply({ ephemeral: true, content: '**:x: | Você não pode banir a si mesmo!**' });
-            if (member.id === client.user.id) return interaction.reply({ ephemeral: true, content: `Ei, não posso banir a mim mesma!` })
-
-            interaction.reply({
-                embeds: [
-                    new EmbedBuilder()
-                        .setColor('Red')
-                        .setTitle(`Banimento Temporário Aplicado`)
-                        .addFields(
-                            {
-                                name:
-                                    `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\u2800\u2a65 Tempo: ${tempoCompleto}\n\n`
-                            },
-                            {
-                                name:
-                                    `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: ${banCountMod}`
-                            }
-                        )
-                        .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
-                        .setFooter({text: `🕒 | ${pegarDataNow()}`})
-
-                ]
-            })
-
-            return
-
-            member.ban({ reason: [motivo] }).then(() => {
-                interaction.reply(`✅ | O membro ${user.username} foi banido com sucesso!`)
-
-                if (messageEspecial) {
-                    interaction.channel.send({
-                        embeds: [
-                            new EmbedBuilder()
-                                .setColor('Red')
-                                .setTitle(`Banimento Temporário Aplicado`)
-                                .addFields(
-                                    {
-                                        name: `${!member.bot ? emojis.bot : emojis.user} | ${!member.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65${!member.bot ? 'Usuário:' : 'Bot:'} ${member.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}`
-                                    }
-                                )
-                                /* .setDescription(`### ${!member.bot ? emojis.bot : emojis.user} | ${!member.bot ? 'Usuário banido:' : 'Bot banido:'}\n\u2800\u2a65${!member.bot ? 'Usuário:' : 'Bot:'} ${member.username} (${member.id})\n\u2800\u2a65`) */
-                                .setThumbnail(interaction.user.displayAvatarURL({ dynamic: true }))
-
-                        ]
-                    })
-                } else {
-
-                }
-            })
-
         };
 
         async function banPerm() {

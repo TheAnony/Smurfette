@@ -147,11 +147,10 @@ module.exports = {
       .setAuthor({ name: `Menu de ajuda, categoria: moderação`, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
       .setFooter({ text: `/help-ajuda \u2023 Página 8/8`, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
       .setColor('#3460FF')
-      .setTitle(`- Total de comandos: ${emojis.num1}${emojis.num3}\n`)
+      .setTitle(`- Total de comandos: ${emojis.num1}${emojis.num2}\n`)
       .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setDescription(
         `[${emoji.indisponivel}] ${p} \`\`Banimento:\`\` **Punição severa!**\n` +
-        `[${emoji.indisponivel}] ${s} \`\`BanTemporário:\`\` **Aplica um banimento temporário a um membro.**\n` +
         `[${emoji.indisponivel}] ${s} \`\`BanPermanente:\`\` **Aplica um banimento permanente a um membro. Sem voltas!**\n` +
         `[${emoji.indisponivel}] ${s} \`\`Unban:\`\` **Retira o banimento de um membro.**\n\n` +
         `[${emoji.indisponivel}] ${s} \`\`BanList:\`\` **Fornece a lista dos membros banidos do servidor.**\n\n` +
@@ -222,7 +221,7 @@ module.exports = {
           },
           {
             label: "Página 8/8",
-            description: "PÁGINA SOBRE MODERAÇÃO [13]",
+            description: "PÁGINA SOBRE MODERAÇÃO [12]",
             value: "pg8"
           }
         )
