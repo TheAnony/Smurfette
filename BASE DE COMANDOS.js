@@ -56,3 +56,7 @@ function wait(tempo) {
   setTimeout(()=>{}, tempo);
 }
 */
+
+/* const time = interaction.options.getString('tempo');
+let tempo = stringMS(time)
+let tempoCompleto = formatTime(tempo) */
