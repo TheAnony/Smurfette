@@ -15,16 +15,16 @@ function arrayGetAbrev(array) {
 }
 
 function getSorteioClaim(str) {
-                str = str.toLowerCase().trim().replace(/\s+/g, " ")
-                let time1 = str.match(/sorteio: (.*?) claim/)[1];
-                let time2 = str.match(/claim: (.*)/)[1];
-                let sorteio = time1.split(' ')
-                let claim = time2.split(' ')
-                sorteio = arrayGetAbrev(sorteio);
-                claim = arrayGetAbrev(claim)
-                return {
-                        sorteio, claim
-                }
+        str = str.toLowerCase().trim().replace(/\s+/g, " ")
+        let time1 = str.match(/sorteio: (.*?) claim/)[1];
+        let time2 = str.match(/claim: (.*)/)[1];
+        let sorteio = time1.split(' ')
+        let claim = time2.split(' ')
+        sorteio = arrayGetAbrev(sorteio);
+        claim = arrayGetAbrev(claim)
+        return {
+                sorteio, claim
+        }
 }
 
 function pegarDataNow() {
@@ -53,6 +53,7 @@ function convertTimeStringToList(timeString) {
 function stringMS(timeString) {
         const millisecondsInYear = 31_536_000_000;
         const millisecondsInMonth = 2_628_000_000;
+        const millisecondsInWeek = 604_800_000;
         const millisecondsInDay = 86_400_000;
         const millisecondsInHour = 3_600_000;
         const millisecondsInMinute = 60_000;
@@ -91,6 +92,14 @@ function stringMS(timeString) {
                         case 'mês':
                         case 'm':
                                 totalMilliseconds += parseInt(timeUnits[i]) * millisecondsInMonth;
+                                break;
+                        case 'weeks':
+                        case 'semanas':
+                        case 'week':
+                        case 'semana':
+                        case 'w':
+                        case 'ws':
+                                totalMilliseconds += parseInt(timeUnits[i]) * millisecondsInWeek;
                                 break;
                         case 'days':
                         case 'dias':

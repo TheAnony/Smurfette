@@ -74,6 +74,17 @@ module.exports = {
                             description: 'Forneça qual mensagem aparecerá na mensagem de ban.',
                             type: ApplicationCommandOptionType.String,
                             required: false
+                        },
+                        {
+                            name: "apagar",
+                            type: ApplicationCommandOptionType.String,
+                            description: "Escolha qual ação deseja realizar.",
+                            required: false,
+                            choices: [
+                                { name: 'apagar-texto', value: 'apgTexto' },
+                                { name: 'apagar-imagem', value: 'apgImagem' },
+                                { name: 'apagar-textoEimagem', value: 'apgTextoImagem' },
+                            ]
                         }
                     ]
                 },
@@ -82,7 +93,7 @@ module.exports = {
     ],
 
     run: async (client, interaction) => {
-        if (!interaction.member.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content: `**Você não tem permissão de utilizar esse comando!**`, ephemeral: true })
+        /* if (!interaction.member.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content: `**Você não tem permissão de utilizar esse comando!**`, ephemeral: true }) */
 
         const subcommand = interaction.options.getSubcommand();
         const User = interaction.options.getUser('member') || interaction.user.id
@@ -162,7 +173,7 @@ module.exports = {
             if (member.id === client.user.id) return interaction.reply({ ephemeral: true, content: `Ei, não posso banir a mim mesma!` })
 
             if (imageBan || textBan) {
-                if(imageBan && !textBan) {
+                if (imageBan && !textBan) {
                     interaction.reply({
                         embeds: [
                             new EmbedBuilder()
@@ -207,7 +218,7 @@ module.exports = {
                                 .setFooter({ text: `🕒 | ${pegarDataNow()}` })
                         ]
                     })
-                } else if(textBan && imageBan) {
+                } else if (textBan && imageBan) {
                     interaction.reply({
                         embeds: [
                             new EmbedBuilder()
@@ -217,12 +228,12 @@ module.exports = {
                                     {
                                         name:
                                             `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\n`,
-                                            inline: true
+                                        inline: true
                                     },
                                     {
                                         name:
                                             `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: **__${banCountMod}__**`,
-                                            inline: true
+                                        inline: true
                                     },
                                     {
                                         name: `:paperclips: | O (A) \`${interaction.user.username}\` tem um recado:`,
@@ -344,6 +355,68 @@ module.exports = {
         }
 
         async function banMessage() {
+            const apagar = interaction.options.getString("apagar")
+            if (apagar) {
+                let texto = await db.get(`messageTxtBan_${interaction.user.id}`)
+                let imagem = await db.get(`messageImageBan_${interaction.user.id}`)
+
+                switch (apagar) {
+                    case 'apgTexto':
+                        if (!texto) return interaction.reply({ ephemeral: true, content: `:x: | Não consigo apagar pois você não configurou nenhum texto!` })
+
+                        interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setColor('Green')
+                                    .setTitle('Texto apagado com sucesso!')
+                                    .setDescription(`### Texto apagado:\n \`\`\`${texto}\`\`\``)
+                                    .setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
+                            ]
+                        })
+
+                        await db.delete(`messageTxtBan_${interaction.user.id}`)
+                        break;
+
+                    case 'apgImagem':
+                        if (!imagem) return interaction.reply({ ephemeral: true, content: `:x: | Não consigo apagar pois você não configurou nenhuma imagem!` })
+
+                        interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setColor('Green')
+                                    .setTitle('Imagem apagado com sucesso!')
+                                    .setDescription(`### Imagem apagada:`)
+                                    .setImage(imagem)
+                                    .setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
+                            ]
+                        })
+
+                        await db.delete(`messageImageBan_${interaction.user.id}`)
+                        break;
+
+                    case 'apgTextoImagem':
+                        if (!texto || !image) return interaction.reply({ ephemeral: true, content: `:x: | Não consigo apagar pois você não configurou nenhuma imagem ou texto!` })
+                        interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setColor('Green')
+                                    .setTitle('Texto e imagem apagados com sucesso!')
+                                    .setDescription(`### Texto apagado:\n \`\`\`${texto}\`\`\`\n### Imagem Apagada:`)
+                                    .setImage(imagem)
+                                    .setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
+                            ]
+                        })
+
+                        await db.delete(`messageTxtBan_${interaction.user.id}`)
+                        await db.delete(`messageImageBan_${interaction.user.id}`)
+                        break;
+
+                    default:
+                        break;
+                }
+                return;
+            }
+
             const image = interaction.options.getAttachment('midia');
             if (image) {
                 let resul = image.contentType.endsWith('gif') ? true : image.contentType.endsWith('jpg') ? true : image.contentType.endsWith('jpeg') ? true : image.contentType.endsWith('png') ? true : image.contentType.endsWith('mp4') ? true : false
@@ -351,7 +424,7 @@ module.exports = {
             }
             const msg = interaction.options.getString('texto');
             let msgImage = await db.get(`messageImageBan_${interaction.user.id}`) || 'https://cdn.discordapp.com/attachments/921107172316815414/1154785118221774920/images_17.jpg'
-            let msgText = await db.get(`messageTxtBan_${interaction.user.id}`) || '### Nenhuma messagem definida!'
+            let msgText = await db.get(`messageTxtBan_${interaction.user.id}`) || 'Nenhuma mensagem definida!'
 
             if (!image && !msg) {
                 let embed = new EmbedBuilder()
@@ -403,7 +476,6 @@ module.exports = {
                 await db.set(`messageImageBan_${interaction.user.id}`, `${image.url}`)
                 await db.set(`messageTxtBan_${interaction.user.id}`, `${msg}`)
                 interaction.reply({ embeds: [embed] })
-
             }
         }
     }
