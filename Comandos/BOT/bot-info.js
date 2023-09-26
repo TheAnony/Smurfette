@@ -43,10 +43,10 @@ module.exports = {
 
     function upTime(d, h, m, s) {
       let coreDasAntigas = []
-      d != 0 ? coreDasAntigas.push(`${d} dias`) : null
-      h != 0 ? coreDasAntigas.push(` ${h} horas`) : null
-      m != 0 ? coreDasAntigas.push(` ${m} minutos`) : null
-      coreDasAntigas.push(` ${s} segundos.`)
+      d != 0 ? coreDasAntigas.push(`${d} dia ${d > 1 ? 's' : ''}`) : null
+      h != 0 ? coreDasAntigas.push(` ${h} hora${h > 1 ? 's' : ''}`) : null
+      m != 0 ? coreDasAntigas.push(` ${m} minuto${m > 1 ? 's' : ''}`) : null
+      coreDasAntigas.push(` ${s} segundo${s > 1 ? 's' : ''}.`)
       return coreDasAntigas
     }
 
