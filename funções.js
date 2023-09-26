@@ -90,7 +90,6 @@ function stringMS(timeString) {
                         case 'meses':
                         case 'month':
                         case 'mês':
-                        case 'm':
                                 totalMilliseconds += parseInt(timeUnits[i]) * millisecondsInMonth;
                                 break;
                         case 'weeks':
@@ -123,6 +122,7 @@ function stringMS(timeString) {
                         case 'minuto':
                         case 'min':
                         case 'mnt':
+                        case 'm':
                                 totalMilliseconds += parseInt(timeUnits[i]) * millisecondsInMinute;
                                 break;
                         case 'seconds':
