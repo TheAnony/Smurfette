@@ -170,7 +170,7 @@ module.exports = {
             const textBan = await db.get(`messageTxtBan_${interaction.user.id}`)
             const embedConfirmar = new EmbedBuilder()
                 .setColor('Yellow')
-                .setTitle(`⭕ | Você deseja realmente banir esse ${!user.bot ? 'usuário' : 'bot'}?`)
+                .setTitle(`⚠️ | Você deseja realmente banir esse ${!user.bot ? 'usuário' : 'bot'}?`)
                 .setFields({
                     name: `${!user.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.user.id})`,
                     value: `\u2800\u2a65 Motivo do ban: ${motivo}`
@@ -181,221 +181,222 @@ module.exports = {
             /* if (member.id === interaction.user.id) return interaction.reply({ ephemeral: true, content: '**:x: | Você não pode banir a si mesmo!**' }); */
             if (member.id === client.user.id) return interaction.reply({ ephemeral: true, content: `Ei, não posso banir a mim mesma!` })
 
-            interaction.reply({ embeds: [embedConfirmar], components: [button] }).then(async (messagem) => {
+            member.ban({ reason: [motivo] }).then(async () => {
+                interaction.reply({ embeds: [embedConfirmar], components: [button] }).then(async (messagem) => {
 
-                const filter = (i) => i.user.id === interaction.user.id
-                const coletor = messagem.createMessageComponentCollector({
-                    filter, componentType: ComponentType.Button, max: 1, time: stringMS('3m')
-                });
-
-                coletor.on("end", async (i) => {
-                    await interaction.editReply({
-                        components: [button.setComponents(
-                            new ButtonBuilder()
-                                .setCustomId("confirmDisabled")
-                                .setEmoji("✅")
-                                .setStyle(ButtonStyle.Success)
-                                .setDisabled(true),
-                            new ButtonBuilder()
-                                .setCustomId("cancelDisabled")
-                                .setEmoji("⛔")
-                                .setStyle(ButtonStyle.Danger)
-                                .setDisabled(true)
-                        )]
+                    const filter = (i) => i.user.id === interaction.user.id
+                    const coletor = messagem.createMessageComponentCollector({
+                        filter, componentType: ComponentType.Button, max: 1, time: stringMS('3m')
                     });
-                });
 
-                coletor.on('collect', async (i) => {
-                    await i.deferUpdate();
-                    if (i.customId === 'cancel') {
+                    coletor.on("end", async (i) => {
                         await interaction.editReply({
-                            embeds: [
-                                new EmbedBuilder()
-                                    .setColor('Red')
-                                    .setTitle('❌ | Banimento cancelado!')
-                                    .setFields({
-                                        name: `${!user.bot ? 'usuário' : 'bot'} ${member.user.username} (${member.user.id})`,
-                                        value: `\u2800\u2a65 Motivo do ban: ${motivo}`
-                                    })
-                                    .setFooter({ text: `🕒 | ${pegarDataNow()}` })
-                                    .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
-                            ],
-                            components: [buttonDisabled]
-                        })
-                        return;
-                    }
+                            components: [button.setComponents(
+                                new ButtonBuilder()
+                                    .setCustomId("confirmDisabled")
+                                    .setEmoji("✅")
+                                    .setStyle(ButtonStyle.Success)
+                                    .setDisabled(true),
+                                new ButtonBuilder()
+                                    .setCustomId("cancelDisabled")
+                                    .setEmoji("⛔")
+                                    .setStyle(ButtonStyle.Danger)
+                                    .setDisabled(true)
+                            )]
+                        });
+                    });
 
-                    if (imageBan || textBan) {
-                        if (imageBan && !textBan) {
+                    coletor.on('collect', async (i) => {
+                        await i.deferUpdate();
+                        if (i.customId === 'cancel') {
                             await interaction.editReply({
                                 embeds: [
                                     new EmbedBuilder()
                                         .setColor('Red')
-                                        .setTitle(`Banimento Aplicado`)
-                                        .addFields(
-                                            {
-                                                name:
-                                                    `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\n`
-                                            },
-                                            {
-                                                name:
-                                                    `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: **__${banCountMod}__**`
-                                            }
-                                        )
-                                        .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
+                                        .setTitle('❌ | Banimento cancelado!')
+                                        .setFields({
+                                            name: `${!user.bot ? 'usuário' : 'bot'} ${member.user.username} (${member.user.id})`,
+                                            value: `\u2800\u2a65 Motivo do ban: ${motivo}`
+                                        })
                                         .setFooter({ text: `🕒 | ${pegarDataNow()}` })
-                                        .setImage(imageBan)
-                                ], components: []
-                            })
-                            let embed = new EmbedBuilder()
-                                .setColor('Red')
-                                .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
-                                .setTitle('⚠️ | VOCÊ FOI BANIDO!')
-                                .setFields(
-                                    {
-                                        name: `${emojis.staff} | Autor do banimento:`,
-                                        value: `\u2800\u2a65 ${interaction.user.username} (${interaction.user.id})`,
-                                        inline: true
-                                    },
-                                    {
-                                        name: `✅ | Motivo do banimento:`,
-                                        value: `\u2800\u2a65 \`${motivo}\``,
-                                        inline: true
-                                    }
-                                )
-                                .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-                                .setFooter({ text: `🕒 | ${pegarDataNow()}` })
-                            let embedImage = new EmbedBuilder()
-                                .setImage(imageBan)
-                                .setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
-                                .setColor('Red')
-                            try {
-                                await user.send({ embeds: [embed, embedImage] })
-                            } catch (error) { }
-                        } else if (textBan && !imageBan) {
-                            await interaction.editReply({
-                                embeds: [
-                                    new EmbedBuilder()
-                                        .setColor('Red')
-                                        .setTitle(`Banimento Aplicado`)
-                                        .addFields(
-                                            {
-                                                name:
-                                                    `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\n`
-                                            },
-                                            {
-                                                name:
-                                                    `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: **__${banCountMod}__**`
-                                            },
-                                            {
-                                                name: `:paperclips: | O (A) ${interaction.user.username} tem um recado:`,
-                                                value: `\`\`\`${textBan}\`\`\``
-                                            }
-                                        )
                                         .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
-                                        .setFooter({ text: `🕒 | ${pegarDataNow()}` })
-                                ], components: []
+                                ],
+                                components: [buttonDisabled]
                             })
-                            let embed = new EmbedBuilder()
-                                .setColor('Red')
-                                .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
-                                .setTitle('⚠️ | VOCÊ FOI BANIDO!')
-                                .setFields(
-                                    {
-                                        name: `${emojis.staff} | Autor do banimento:`,
-                                        value: `\u2800\u2a65 ${interaction.user.username} (${interaction.user.id})`,
-                                        inline: true
-                                    },
-                                    {
-                                        name: `✅ | Motivo do banimento:`,
-                                        value: `\u2800\u2a65 \`${motivo}\``,
-                                        inline: true
-                                    }
-                                )
-                                .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-                                .setFooter({ text: `🕒 | ${pegarDataNow()}` })
-                            let embedImage = new EmbedBuilder()
-                                .setDescription(`\`\`\`${textBan}\`\`\``)
-                                .setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
-                                .setColor('Red')
-                            try {
-                                await user.send({ embeds: [embed, embedImage] })
-                            } catch (error) { }
-                        } else if (textBan && imageBan) {
-                            await interaction.editReply({
-                                embeds: [
-                                    new EmbedBuilder()
-                                        .setColor('Red')
-                                        .setTitle(`Banimento Aplicado`)
-                                        .addFields(
-                                            {
-                                                name:
-                                                    `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\n`,
-                                                inline: true
-                                            },
-                                            {
-                                                name:
-                                                    `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: **__${banCountMod}__**`,
-                                                inline: true
-                                            },
-                                            {
-                                                name: `:paperclips: | O (A) \`${interaction.user.username}\` tem um recado:`,
-                                                value: `\`\`\`${textBan}\`\`\``
-                                            }
-                                        )
-                                        .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
-                                        .setFooter({ text: `🕒 | ${pegarDataNow()}` })
-                                        .setImage(imageBan)
-                                ], components: []
-                            })
-                            let embed = new EmbedBuilder()
-                                .setColor('Red')
-                                .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
-                                .setTitle('⚠️ | VOCÊ FOI BANIDO!')
-                                .setFields(
-                                    {
-                                        name: `${emojis.staff} | Autor do banimento:`,
-                                        value: `\u2800\u2a65 ${interaction.user.username} (${interaction.user.id})`,
-                                        inline: true
-                                    },
-                                    {
-                                        name: `✅ | Motivo do banimento:`,
-                                        value: `\u2800\u2a65 \`${motivo}\``,
-                                        inline: true
-                                    }
-                                )
-                                .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-                                .setFooter({ text: `🕒 | ${pegarDataNow()}` })
-                            let embedImage = new EmbedBuilder()
-                                .setDescription(`\`\`\`${textBan}\`\`\``)
-                                .setImage(imageBan)
-                                .setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
-                                .setColor('Red')
-                            try {
-                                await user.send({ embeds: [embed, embedImage] })
-                            } catch (error) { }
+                            return;
                         }
-                    } else {
-                        await interaction.editReply({
-                            embeds: [
-                                new EmbedBuilder()
+
+                        if (imageBan || textBan) {
+                            if (imageBan && !textBan) {
+                                await interaction.editReply({
+                                    embeds: [
+                                        new EmbedBuilder()
+                                            .setColor('Red')
+                                            .setTitle(`Banimento Aplicado`)
+                                            .addFields(
+                                                {
+                                                    name:
+                                                        `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\n`
+                                                },
+                                                {
+                                                    name:
+                                                        `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: **__${banCountMod}__**`
+                                                }
+                                            )
+                                            .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
+                                            .setFooter({ text: `🕒 | ${pegarDataNow()}` })
+                                            .setImage(imageBan)
+                                    ], components: []
+                                })
+                                let embed = new EmbedBuilder()
                                     .setColor('Red')
-                                    .setTitle(`Banimento Aplicado`)
-                                    .addFields(
+                                    .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
+                                    .setTitle('⚠️ | VOCÊ FOI BANIDO!')
+                                    .setFields(
                                         {
-                                            name:
-                                                `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\n`
+                                            name: `${emojis.staff} | Autor do banimento:`,
+                                            value: `\u2800\u2a65 ${interaction.user.username} (${interaction.user.id})`,
+                                            inline: true
                                         },
                                         {
-                                            name:
-                                                `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: **__${banCountMod}__**`
+                                            name: `✅ | Motivo do banimento:`,
+                                            value: `\u2800\u2a65 \`${motivo}\``,
+                                            inline: true
                                         }
                                     )
-                                    .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
+                                    .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
                                     .setFooter({ text: `🕒 | ${pegarDataNow()}` })
-                            ], components: []
-                        })
-                        let embed = new EmbedBuilder()
+                                let embedImage = new EmbedBuilder()
+                                    .setImage(imageBan)
+                                    .setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
+                                    .setColor('Red')
+                                try {
+                                    await user.send({ embeds: [embed, embedImage] })
+                                } catch (error) { }
+                            } else if (textBan && !imageBan) {
+                                await interaction.editReply({
+                                    embeds: [
+                                        new EmbedBuilder()
+                                            .setColor('Red')
+                                            .setTitle(`Banimento Aplicado`)
+                                            .addFields(
+                                                {
+                                                    name:
+                                                        `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\n`
+                                                },
+                                                {
+                                                    name:
+                                                        `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: **__${banCountMod}__**`
+                                                },
+                                                {
+                                                    name: `:paperclips: | O (A) ${interaction.user.username} tem um recado:`,
+                                                    value: `\`\`\`${textBan}\`\`\``
+                                                }
+                                            )
+                                            .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
+                                            .setFooter({ text: `🕒 | ${pegarDataNow()}` })
+                                    ], components: []
+                                })
+                                let embed = new EmbedBuilder()
+                                    .setColor('Red')
+                                    .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
+                                    .setTitle('⚠️ | VOCÊ FOI BANIDO!')
+                                    .setFields(
+                                        {
+                                            name: `${emojis.staff} | Autor do banimento:`,
+                                            value: `\u2800\u2a65 ${interaction.user.username} (${interaction.user.id})`,
+                                            inline: true
+                                        },
+                                        {
+                                            name: `✅ | Motivo do banimento:`,
+                                            value: `\u2800\u2a65 \`${motivo}\``,
+                                            inline: true
+                                        }
+                                    )
+                                    .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
+                                    .setFooter({ text: `🕒 | ${pegarDataNow()}` })
+                                let embedImage = new EmbedBuilder()
+                                    .setDescription(`\`\`\`${textBan}\`\`\``)
+                                    .setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
+                                    .setColor('Red')
+                                try {
+                                    await user.send({ embeds: [embed, embedImage] })
+                                } catch (error) { }
+                            } else if (textBan && imageBan) {
+                                await interaction.editReply({
+                                    embeds: [
+                                        new EmbedBuilder()
+                                            .setColor('Red')
+                                            .setTitle(`Banimento Aplicado`)
+                                            .addFields(
+                                                {
+                                                    name:
+                                                        `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\n`,
+                                                    inline: true
+                                                },
+                                                {
+                                                    name:
+                                                        `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: **__${banCountMod}__**`,
+                                                    inline: true
+                                                },
+                                                {
+                                                    name: `:paperclips: | O (A) \`${interaction.user.username}\` tem um recado:`,
+                                                    value: `\`\`\`${textBan}\`\`\``
+                                                }
+                                            )
+                                            .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
+                                            .setFooter({ text: `🕒 | ${pegarDataNow()}` })
+                                            .setImage(imageBan)
+                                    ], components: []
+                                })
+                                let embed = new EmbedBuilder()
+                                    .setColor('Red')
+                                    .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
+                                    .setTitle('⚠️ | VOCÊ FOI BANIDO!')
+                                    .setFields(
+                                        {
+                                            name: `${emojis.staff} | Autor do banimento:`,
+                                            value: `\u2800\u2a65 ${interaction.user.username} (${interaction.user.id})`,
+                                            inline: true
+                                        },
+                                        {
+                                            name: `✅ | Motivo do banimento:`,
+                                            value: `\u2800\u2a65 \`${motivo}\``,
+                                            inline: true
+                                        }
+                                    )
+                                    .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
+                                    .setFooter({ text: `🕒 | ${pegarDataNow()}` })
+                                let embedImage = new EmbedBuilder()
+                                    .setDescription(`\`\`\`${textBan}\`\`\``)
+                                    .setImage(imageBan)
+                                    .setFooter({ text: interaction.user.username, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
+                                    .setColor('Red')
+                                try {
+                                    await user.send({ embeds: [embed, embedImage] })
+                                } catch (error) { }
+                            }
+                        } else {
+                            await interaction.editReply({
+                                embeds: [
+                                    new EmbedBuilder()
+                                        .setColor('Red')
+                                        .setTitle(`Banimento Aplicado`)
+                                        .addFields(
+                                            {
+                                                name:
+                                                    `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\n`
+                                            },
+                                            {
+                                                name:
+                                                    `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: **__${banCountMod}__**`
+                                            }
+                                        )
+                                        .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
+                                        .setFooter({ text: `🕒 | ${pegarDataNow()}` })
+                                ], components: []
+                            })
+                            let embed = new EmbedBuilder()
                                 .setColor('Red')
                                 .setAuthor({ name: interaction.guild.name, iconURL: interaction.guild.iconURL({ dynamic: true }) })
                                 .setTitle('⚠️ | VOCÊ FOI BANIDO!')
@@ -416,40 +417,17 @@ module.exports = {
                             try {
                                 await user.send({ embeds: [embed] })
                             } catch (error) { }
-                    }
-                })
-            })
-
-
-            return
-
-            member.ban({ reason: [motivo] }).then(async () => {
-                interaction.reply(`✅ | O membro ${user.username} foi banido com sucesso!`)
-
-                if (messageEspecial) {
-                    interaction.reply({
-                        embeds: [
-                            new EmbedBuilder()
-                                .setColor('Red')
-                                .setTitle(`Banimento Aplicado`)
-                                .addFields(
-                                    {
-                                        name:
-                                            `${member.user.bot ? emojis.bot : emojis.user} | ${!member.user.bot ? 'Usuário banido: ' : 'Bot banido:'}`, value: `\u2800\u2a65 ${!member.bot ? 'Usuário:' : 'Bot:'} ${member.user.username} (${member.id})\n\u2800\u2a65 Motivo: ${motivo}\n\n`
-                                    },
-                                    {
-                                        name:
-                                            `<:DiscordStaff:1134126501672009810> | Autor do banimento:`, value: `\u2800\u2a65 Staff: ${interaction.user.username} (${interaction.user.id}) \n\u2800\u2a65 Quantia de bans: ${banCountMod + 1}`
-                                    }
-                                )
-                                .setThumbnail(member.user.displayAvatarURL({ dynamic: true, size: 2048 }))
-                                .setFooter({ text: `🕒 | ${pegarDataNow()}` })
-                        ]
+                        }
                     })
-                    await db.add(`banCountMod_${AuthorUser.id}`, 1)
-                } else {
+                })
 
-                }
+            }).catch(() => {
+                interaction.reply({embeds: [
+                    new EmbedBuilder()
+                    .setColor('Red')
+                    .setTitle('❌ | Não foi possível realizar o banimento!')
+                    .setDescription(`> O usuário tem o cargo maior ou igual ao meu! Se deseja banir-lo (a), **suba meu cargo acima da pessoa** e realize novamente o comando. **Ou me dê a permissão de \`Banir Membros\` ou \`Administrador\`**`)
+                ]})
             })
         };
 
