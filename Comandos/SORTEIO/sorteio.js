@@ -4,7 +4,7 @@ const ms = require('ms');
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
 const wait = require('node:timers/promises').setTimeout
-const { formatTime, stringMS, getSorteioClaim } = require('../../funções')
+const { formatTime, stringMS, getSorteioClaim } = require('../../funcoes')
 
 module.exports = {
   name: "sorteio", // Coloque o nome do comando

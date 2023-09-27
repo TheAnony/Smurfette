@@ -3,7 +3,7 @@ const { QuickDB } = require('quick.db')
 const db = new QuickDB();
 const { PaginationWrapper } = require('djs-button-pages');
 const { NextPageButton, PreviousPageButton } = require('@djs-button-pages/presets');
-const { stringMS, formatTime, pegarDataNow } = require('../../funções');
+const { stringMS, formatTime, pegarDataNow } = require('../../funcoes');
 
 module.exports = {
     name: "banimento", // Coloque o nome do comando
@@ -93,7 +93,7 @@ module.exports = {
     ],
 
     run: async (client, interaction) => {
-        /* if (!interaction.member.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content: `**Você não tem permissão de utilizar esse comando!**`, ephemeral: true }) */
+        if (!interaction.member.permissions.has(PermissionFlagsBits.BanMembers)) return interaction.reply({ content: `**Você não tem permissão de utilizar esse comando!**`, ephemeral: true })
 
         const subcommand = interaction.options.getSubcommand();
         const User = interaction.options.getUser('member') || interaction.user.id
