@@ -16,7 +16,7 @@ module.exports = {
             type: ApplicationCommandOptionType.SubcommandGroup,
             options: [
                 {
-                    name: 'ban-permanente',
+                    name: 'ban',
                     description: `Aplica um banimento parmenente a um membro.`,
                     type: ApplicationCommandOptionType.Subcommand,
                     options: [
@@ -49,7 +49,7 @@ module.exports = {
                             name: 'motivo-unban',
                             description: 'Informe o motivo.',
                             type: ApplicationCommandOptionType.String,
-                            required: true
+                            required: false
                         },
                     ]
                 },
@@ -134,14 +134,18 @@ module.exports = {
         **Motivo de banimento:** ${map.reason}`
         })
         let bansForId = bans.map(map => {
-            return `${map.user.id}`
+            return map.user.id
+        })
+
+        let bansForUserName = bans.map(map => {
+            return map.user.username
         })
 
         let banCountMod = await db.get(`banCountMod_${AuthorUser.id}`);
         if (!banCountMod) banCountMod = await db.set(`banCountMod_${AuthorUser.id}`, 0);
 
         switch (subcommand) {
-            case 'ban-permanente':
+            case 'ban':
                 banPerm();
                 break;
 
@@ -163,7 +167,7 @@ module.exports = {
 
         async function banPerm() {
             const user = interaction.options.getUser('member-perm');
-            const member = interaction.guild.members.cache.get(user.id);
+            const member = interaction.guild.members.cache.get(user.id)
             const motivo = interaction.options.getString('motivo-perm') || 'Indefinido'
             const emojis = require('../../emojis.json')
             const imageBan = await db.get(`messageImageBan_${interaction.user.id}`)
@@ -183,6 +187,7 @@ module.exports = {
 
             member.ban({ reason: [motivo] }).then(async () => {
                 interaction.reply({ embeds: [embedConfirmar], components: [button] }).then(async (messagem) => {
+                    banCountMod++
 
                     const filter = (i) => i.user.id === interaction.user.id
                     const coletor = messagem.createMessageComponentCollector({
@@ -420,19 +425,84 @@ module.exports = {
                         }
                     })
                 })
-
+                await db.add(`banCountMod_${AuthorUser.id}`, 1);
             }).catch(() => {
-                interaction.reply({embeds: [
-                    new EmbedBuilder()
-                    .setColor('Red')
-                    .setTitle('❌ | Não foi possível realizar o banimento!')
-                    .setDescription(`> O usuário tem o cargo maior ou igual ao meu! Se deseja banir-lo (a), **suba meu cargo acima da pessoa** e realize novamente o comando. **Ou me dê a permissão de \`Banir Membros\` ou \`Administrador\`**`)
-                ]})
+                interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor('Red')
+                            .setTitle('❌ | Não foi possível realizar o banimento!')
+                            .setDescription(`> O usuário tem o cargo maior ou igual ao meu! Se deseja banir-lo (a), **suba meu cargo acima da pessoa** e realize novamente o comando. **Ou me dê a permissão de \`Banir Membros\` ou \`Administrador\`**`)
+                    ]
+                })
             })
         };
 
         async function unBan() {
-            return interaction.reply(`Nada ainda!`)
+            let user = interaction.options.getString('member-unban').trim()
+            const motivo = interaction.options.getString('motivo-unban') || 'Indefinido'
+
+            if (/<@(.*?)>/.test(user) || /<@!(.*?)>/.test(user)) {
+                let regex;
+                /<@!(.*?)>/.test(user) ? regex = /<@!(\d+)>/ : /<@(.*?)>/.test(user) ? regex = /<@(\d+)>/ : null
+                user = regex.exec(user)[1]
+
+            } else if (bansForId.includes(user) || bansForUserName.includes(user)) {
+                let desbanido;
+                if (bansForId.includes(user)) {
+                    let filtrado = bans.filter(item => item.user.id === user)
+                    desbanido = filtrado.map(item => {
+                        let array = [];
+                        array.push(item.user.username);
+                        array.push(item.user.id);
+                        array.push(item.user.discriminator);
+                        return array
+                    }).flat()
+                } else if (bansForUserName.includes(user)) {
+                    let filtrado = bans.filter(item => item.user.username === user)
+                    desbanido = filtrado.map(item => {
+                        let array = [];
+                        array.push(item.user.username);
+                        array.push(item.user.id);
+                        array.push(item.user.discriminator);
+                        return array
+                    }).flat()
+                }
+                /**
+                 * desbanido[0] é o username,
+                 * desbanido[1] é o id,
+                 * desbanido[2] é o discriminator
+                 */
+                let embed = new EmbedBuilder()
+                    .setColor('Green')
+                    .setTitle(`✅ | O usuário \`${desbanido[0]}${desbanido[2] !== '0' ? `#${desbanido[2]}` : ''} (${desbanido[1]})\` foi desbanido com sucesso!`)
+                    .setDescription(`> **Motivo:** \`${motivo}\``)
+                    .setFooter({ text: `🕒 | ${pegarDataNow()}` })
+
+                interaction.guild.members.unban(user, motivo).then(() => {
+                    interaction.reply({ embeds: [embed] }).catch((error) => {
+                        interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setColor('Red')
+                                    .setTitle('❌ | Não foi possível desbanir o usuário!')
+                                    .setDescription('> Por favor, tente novamente.')
+                            ]
+                        })
+                    })
+                })
+            } else {
+                return interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor('Red')
+                            .setTitle('❌ | Usuário não encontrado!')
+                            .setDescription(`> Por favor, forneça ou a \`menção\` o \`id\` ou \`nome de usuário\`!`)
+                    ]
+                })
+            }
+
+
         };
 
         async function banList() {
