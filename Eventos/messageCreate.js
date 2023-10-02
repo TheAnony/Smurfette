@@ -36,7 +36,7 @@ client.on("messageCreate", async (message) => {
       "Tudo aponta que não", "Isso está além do que eu sei :confounded:", "https://tenor.com/view/smurfette-winking-girl-eye-wink-smile-the-smurfs-gif-26500522"
     ]  
   
-    let num = Math.floor(Math.floor(Math.random() * respostas.length))
+    let num = Math.floor(Math.random() * respostas.length)
     if(msg.startsWith('smurfette') && msg.length > 10) {
       message.reply(respostas[num])
     }
