@@ -150,9 +150,9 @@ module.exports = {
       .setTitle(`- Total de comandos: ${emojis.num1}${emojis.num2}\n`)
       .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setDescription(
-        `[${emoji.indisponivel}] ${p} \`\`Banimento:\`\` **Punição severa!**\n` +
+        `[${emoji.disponivel}] ${p} \`\`Banimento:\`\` **Punição severa!**\n` +
         `[${emoji.disponivel}] ${s} \`\`BanPermanente:\`\` **Aplica um banimento permanente a um membro. Sem voltas!**\n` +
-        `[${emoji.indisponivel}] ${s} \`\`Unban:\`\` **Retira o banimento de um membro.**\n\n` +
+        `[${emoji.disponivel}] ${s} \`\`Unban:\`\` **Retira o banimento de um membro.**\n\n` +
         `[${emoji.disponivel}] ${s} \`\`BanList:\`\` **Fornece a lista dos membros banidos do servidor.**\n\n` +
         `[${emoji.disponivel}] ${s} \`\`ConfigBanMessage:\`\` **Configura a mensagem que aparecerá quando um usuário for banido.**\n\n` +
 
