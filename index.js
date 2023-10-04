@@ -48,7 +48,7 @@ client.login(config.token)
 client.on('ready', async () => {
   console.log(`Estou online em ${client.user.username}!`)
 
-  let atividades = [
+  /* let atividades = [
     `🤖 | 1º Bot oficial da Família Smurf!`,
     `❓ | Precisa de ajuda? Use /help!`,
     `☕ | Nada melhor do que um cafézinho!`,
@@ -58,7 +58,7 @@ client.on('ready', async () => {
   i = 0;
   setInterval(() => {
     client.user.setActivity(atividades[i++ % atividades.length])
-  }, ms('15s'));
+  }, ms('15s')); */
 })
 
 fs.readdir('./Eventos', (err, file) => {
