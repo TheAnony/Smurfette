@@ -24,7 +24,6 @@ module.exports = {
         interaction.reply({ content: `${interaction.user}, seu AFK já está ativado!`, ephemeral: true});
     } else {
         interaction.reply({content: `${interaction.user} modo AFK ativado com sucesso!\nMotivo definido: ${motivo}`, ephemeral: interaction.user.id == '430502315108335617' ? true : false});
-        interaction.member.setNickname(`[AFK] ${interaction.user}`)
 
         await db.set(`modoAfk_${interaction.user.id}`, true);
         await db.set(`motivoAfk_${interaction.user.id}`, motivo);
