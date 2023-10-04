@@ -129,6 +129,9 @@ module.exports = {
         )
 
         let bans = await interaction.guild.bans.fetch()
+
+        let bansForObject = bans.map(banimento => { return banimento.user })
+
         let bansGlobal = bans.map(map => {
             return `**Usuário:** ${map.user.username} (${map.user.id})
         **Motivo de banimento:** ${map.reason}`
@@ -459,14 +462,11 @@ module.exports = {
                         return array
                     }).flat()
                 } else if (bansForUserName.includes(user)) {
-                    let filtrado = bans.filter(item => item.user.username === user)
-                    desbanido = filtrado.map(item => {
-                        let array = [];
-                        array.push(item.user.username);
-                        array.push(item.user.id);
-                        array.push(item.user.discriminator);
-                        return array
-                    }).flat()
+                    let usuárioPegoPeloUsername = bansForObject.find(function(objetoBanidos) {
+                        return objetoBanidos.username === user
+                    })
+                    desbanido = [usuárioPegoPeloUsername.username, usuárioPegoPeloUsername.id, usuárioPegoPeloUsername.discriminator]
+                    user = usuárioPegoPeloUsername
                 }
                 /**
                  * desbanido[0] é o username,
