@@ -2,7 +2,7 @@ const fs = require("fs")
 
 module.exports = async (client) => {
 
-  const SlashsArray = []
+  const SlashsArray = [];
 
   fs.readdir(`./Comandos`, (error, folder) => {
     folder.forEach(subfolder => {
@@ -20,6 +20,7 @@ module.exports = async (client) => {
     });
   });
   client.on("ready", async () => {
-    client.guilds.cache.forEach(guild => guild.commands.set(SlashsArray))
+    /* client.guilds.cache.forEach(guild => guild.commands.set([])) */
+    client.application.commands.set(SlashsArray)
   });
 };
