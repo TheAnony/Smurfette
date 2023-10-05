@@ -187,6 +187,7 @@ module.exports = {
 
             /* if (member.id === interaction.user.id) return interaction.reply({ ephemeral: true, content: '**:x: | Você não pode banir a si mesmo!**' }); */
             if (member.id === client.user.id) return interaction.reply({ ephemeral: true, content: `Ei, não posso banir a mim mesma!` })
+            if (member.id === interaction.user.id) return interaction.reply({ ephemeral: true, content: 'Ei, você não pode banir a si mesmo (a)!' })
 
             member.ban({ reason: [motivo] }).then(async () => {
                 interaction.reply({ embeds: [embedConfirmar], components: [button] }).then(async (messagem) => {
@@ -443,6 +444,8 @@ module.exports = {
 
         async function unBan() {
             let user = interaction.options.getString('member-unban').trim()
+            if (usuario.id === interaction.user.id) return interaction.reply({ ephemeral: true, content: `${emojis.err} | Você não está banido para ser desbanido! Ué? 🤔` })
+            if (usuario.id === client.user.id) return interaction.reply({ ephemeral: true, content: `${emojis.err} | Eu não posso desbanir a mim mesma!` })
             const motivo = interaction.options.getString('motivo-unban') || 'Indefinido'
 
             if (/<@(.*?)>/.test(user) || /<@!(.*?)>/.test(user)) {
@@ -462,7 +465,7 @@ module.exports = {
                         return array
                     }).flat()
                 } else if (bansForUserName.includes(user)) {
-                    let usuárioPegoPeloUsername = bansForObject.find(function(objetoBanidos) {
+                    let usuárioPegoPeloUsername = bansForObject.find(function (objetoBanidos) {
                         return objetoBanidos.username === user
                     })
                     desbanido = [usuárioPegoPeloUsername.username, usuárioPegoPeloUsername.id, usuárioPegoPeloUsername.discriminator]
