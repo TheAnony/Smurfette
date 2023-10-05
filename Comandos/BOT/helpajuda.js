@@ -156,7 +156,7 @@ module.exports = {
         `[${emoji.disponivel}] ${s} \`\`BanList:\`\` **Fornece a lista dos membros banidos do servidor.**\n\n` +
         `[${emoji.disponivel}] ${s} \`\`ConfigBanMessage:\`\` **Configura a mensagem que aparecerá quando um usuário for banido.**\n\n` +
 
-        `[${emoji.indisponivel}] ${p} \`\`Kick:\`\` **Expulsa um membro do servidor.**\n\n` +
+        `[${emoji.disponivel}] ${p} \`\`Kick:\`\` **Expulsa um membro do servidor.**\n\n` +
 
         `[${emoji.indisponivel}] ${p} \`\`Timeout:\`\` **Deixa o membro incapaz de interagir com o servidor.**\n` +
         `[${emoji.indisponivel}] ${s} \`\`SetTimeout:\`\` **Aplica um timeout a um membro.**\n` +
