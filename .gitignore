@@ -1,9 +1,9 @@
 # Dependency directory
 node_modules
-.vscode
 package-lock.json
 squarecloud.app
 config.json
 json.sqlite
 codigo.js
 Comandos/! DEVELOPER/
+.vscode/
