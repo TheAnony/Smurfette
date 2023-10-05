@@ -11,7 +11,7 @@ module.exports = {
       name: 'canal',
       description: `Selecione o canal que deseja bloquear`,
       type: ApplicationCommandOptionType.Channel,
-      required: true,
+      required: false,
     },
   ],
 
@@ -25,7 +25,7 @@ module.exports = {
         }
     if(!interaction.member.roles.cache.some(role => valoresGerados.includes(role.id))) return interaction.reply('**VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**')
 
-    let canal = interaction.options.getChannel('canal')
+    let canal = interaction.options.getChannel('canal') || interaction.channel
     let channelFS = await db.get(`canalFechado_${canal.id}`)
 
     if(channelFS == true) {
@@ -36,7 +36,7 @@ module.exports = {
       })
     } else {
       canal.permissionOverwrites.edit(interaction.guild.id, { SendMessages: false }).then( async() => {
-        interaction.reply({ content: `🔒 O canal de texto ${canal} foi bloqueado!`, ephemeral: true})
+        interaction.reply({ content: `🔒 O canal de texto ${canal} foi desbloqueado!`, ephemeral: true})
         canal.send({ content: `🔒 Este canal foi bloqueado! Utilize novamente \`/lock-unlock\` para desbloquear.`})
         await db.set(`canalFechado_${canal.id}`, true)
     })

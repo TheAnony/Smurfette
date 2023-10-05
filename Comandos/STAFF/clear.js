@@ -33,13 +33,18 @@ module.exports = {
       .setDescription(`(:x:) Não foi possível apagar ${num} mensagens! Verifique se as mensagens foram enviadas em menos de uma semana.`)
       .setTimestamp(Date.now())
 
-    await interaction.channel.bulkDelete(num);
+    await interaction.channel.bulkDelete(num).catch((err) => {
+      interaction.reply({embeds: [embedERR]})
+      setTimeout(() => {
+        interaction.deleteReply()
+      }, 5000);
+    })
 
     await interaction.reply({ embeds: [embedOk] }).then(() => {
       setTimeout(() => {
         interaction.deleteReply()
       }, 5000);
-    }).catch(() => { interaction.editReply({ embeds: [embedERR] }); console.log(error) })
+    }).catch((error) => { interaction.editReply({ embeds: [embedERR] }); console.log(error) })
 
 
 
