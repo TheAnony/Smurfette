@@ -57,10 +57,10 @@ module.exports = {
 
 
     let embed = new EmbedBuilder()
-    .setFooter({text: `/avaliar-staff`, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 })})
-    .setColor('Blurple')
-    .setTitle('#Enviado pelo: '+interaction.user.username || interaction.user)
-    .setDescription(`### - Staff: ${staffer} (${staffer.id})\n### Total de estrelas: ${star()}\n\n### Descrição:\`\`\`${desc}\`\`\``)
+      .setFooter({ text: `/avaliar-staff`, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
+      .setColor('Blurple')
+      .setTitle(`#Enviado pelo: ${interaction.user.username}`)
+      .setDescription(`### - Staff: ${staffer} (${staffer.id})\n### Total de estrelas: ${estrelasDoStaff}\n\n### Descrição:\`\`\`${desc}\`\`\``)
 
     let button = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
