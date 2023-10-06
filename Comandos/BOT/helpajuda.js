@@ -75,7 +75,7 @@ module.exports = {
       .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setDescription(
         `[${emoji.disponivel}] ${p} \`\`Afk:\`\` **Ativa seu modo AFK! (quando digitar algo no chat, automáticamente irá desativar).**\n\n` +
-        `[${emoji.manutencao}] ${p} \`\`Avaliar-staff:\`\` **Sempre tem aquele staff gente fina, né? Avalie um staff dando até 5 estrelas!**\n\n` +
+        `[${emoji.disponivel}] ${p} \`\`Avaliar-staff:\`\` **Sempre tem aquele staff gente fina, né? Avalie um staff dando até 5 estrelas!**\n\n` +
         `[${emoji.indisponivel}] ${p} \`\`Div:\`\` **Divulgue o que quer no canal de divulgações!**\n\n`
       )
 
