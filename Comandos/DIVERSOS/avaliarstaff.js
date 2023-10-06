@@ -42,21 +42,19 @@ module.exports = {
     const stars = interaction.options.getString('estrelas')
     const desc = interaction.options.getString('descrição')
 
-    if(User.bot) return interaction.reply({ephemeral: true, content: `**ESTE USUÁRIO É UM BOT!**`})
-    if(!staffer.roles.cache.some(role => role.id === staffRoleID)) return interaction.reply({ephemeral: true, content: `**ESTE USUÁRIO NÃO É UM STAFF!**`})
-    
+    if (User.bot) return interaction.reply({ ephemeral: true, content: `**ESTE USUÁRIO É UM BOT!**` })
+    if (!staffer.roles.cache.some(role => role.id === staffRoleID)) return interaction.reply({ ephemeral: true, content: `**ESTE USUÁRIO NÃO É UM STAFF!**` })
 
-    function star() {
-        let a = {
-            '1-estrela': '⭐ (1/5)',
-            '2-estrela': '⭐⭐ (2/5)',
-            '3-estrela': '⭐⭐⭐ (3/5)',
-            '4-estrela': '⭐⭐⭐⭐ (4/5)',
-            '5-estrela': '⭐⭐⭐⭐⭐ (5/5)',
-        }
 
-        return a[stars]
+    let quantiaDeEstrelas = {
+      '1-estrela': '⭐ (1/5)',
+      '2-estrelas': '⭐⭐ (2/5)',
+      '3-estrelas': '⭐⭐⭐ (3/5)',
+      '4-estrelas': '⭐⭐⭐⭐ (4/5)',
+      '5-estrelas': '⭐⭐⭐⭐⭐ (5/5)',
     }
+    let estrelasDoStaff = quantiaDeEstrelas[stars]
+
 
     let embed = new EmbedBuilder()
     .setFooter({text: `/avaliar-staff`, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 })})
