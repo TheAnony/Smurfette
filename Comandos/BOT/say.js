@@ -39,8 +39,8 @@ module.exports = {
 
         let embed_fala = interaction.options.getString("embed");
         let normal_fala = interaction.options.getString("messagem");
-        let canal = interaction.options.getChannel("canal")
-        !canal ? canal = interaction.channel : null
+        let canal = interaction.options.getChannel("canal") || canal
+        
         if(canal.type !== ChannelType.GuildText) interaction.reply(`**O canal ${canal} não é um canal de texto!**`)
         
         if (!embed_fala && !normal_fala) {
