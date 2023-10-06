@@ -82,42 +82,35 @@ module.exports = {
     await channelSend.send({ content: `||${staffer}||`, embeds: [embed], components: [button] }).then(async (msg) => {
       await interaction.reply({ ephemeral: true, content: `Sua avaliação ao staffer ${staffer} foi enviada com sucesso!` })
 
-        const filter = (i) => i.user.id == User.id
+      const coletor = msg.createMessageComponentCollector({
+        filter: i => i.user.id === User.id, componentType: ComponentType.Button, max: 1, time: ms('2m')
+      });
 
-        const coletor = channelSend.createMessageComponentCollector({
-            filter, max: 1, time: ms('3d'),
-          });
+      coletor.on("end", async (i) => {
+        msg.edit({ components: [buttonEnd] });
+      });
 
-         coletor.on("end", async (i) => {
-            interaction.editReply({components: [buttonEnd] });
-        });
+      coletor.on("collect", async (i) => {
+        await i.deferUpdate()
+        if (!i.customId === 'button') return;
+        channelSend.send(`POR FAVOR ${staffer}, DIGITE SUA RESPOSTA.`).then((mensagemReply) => {
 
-        coletor.on("collect", async (i) => {
-            if(i.customId === 'button') {
-                channelSend.send({content: `POR FAVOR, ${staffer}, DIGITE SUA RESPOSTA.`, ephemeral: true}).then(() => {
+          let coletorDaResposta = channelSend.createMessageCollector({ filter: i => staffer.id === User.id, max: 1, time: ms('1h') })
 
-                    let col = channelSend.createMessageCollector({max: 1, time: ms('1h')})
+          coletorDaResposta.on('end', () => { })
 
-                col.on('end', () => {})
+          coletorDaResposta.on('collect', resposta => {
+            resposta.delete() && mensagemReply.delete();
+            msg.reply({ content: `||${interaction.user}||`,embeds: [
+              new EmbedBuilder()
+              .setColor('Green')
+              .setDescription(`### - Resposta de ${User} ao ${interaction.user}: \`\`\`${resposta}\`\`\``)
+            ] })
+          })
 
-                col.on('collect', resposta => {
-                    
-
-                    let embedResposta = new EmbedBuilder()
-    .setColor('Green')
-    .setTitle('#Respondido pelo: '+interaction.user.username || interaction.user)
-    .setDescription(`### - Resposta de ${User} ao ${interaction.user}: \`\`\`${resposta}\`\`\``)
-
-                interaction.reply({embeds: [embedResposta]})
-                })
-                
-                })
-
-    
-                
-            }
         })
+      })
     })
-    
+
   }
 }
