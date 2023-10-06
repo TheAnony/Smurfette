@@ -19,11 +19,11 @@ module.exports = {
       type: ApplicationCommandOptionType.String,
       required: true,
       choices: [
-        {name: '⭐', value: '1-estrela'},
-        {name: '⭐⭐', value: '2-estrela'},
-        {name: '⭐⭐⭐', value: '3-estrela'},
-        {name: '⭐⭐⭐⭐', value: '4-estrela'},
-        {name: '⭐⭐⭐⭐⭐', value: '5-estrela'},
+        { name: '⭐', value: '1-estrela' },
+        { name: '⭐⭐', value: '2-estrelas' },
+        { name: '⭐⭐⭐', value: '3-estrelas' },
+        { name: '⭐⭐⭐⭐', value: '4-estrelas' },
+        { name: '⭐⭐⭐⭐⭐', value: '5-estrelas' },
       ],
     },
     {
