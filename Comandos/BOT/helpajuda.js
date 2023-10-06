@@ -139,7 +139,7 @@ module.exports = {
         `[${emoji.indisponivel}] ${p} \`\`Gerador-de-senha:\`\` **Gera uma senha aleatória.**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Gerar-numero-aleatorio:\`\` **Gera uma número aleatória.**\n\n` +
         `[${emoji.manutencao}] ${p} \`\`Lembrete-remind:\`\` **Cria um lembrete.**\n\n` +
-        `[${emoji.indisponivel}] ${p} \`\`Report:\`\` **Reporta um usuário.**\n\n`,
+        `[${emoji.indisponivel}] ${p} \`\`Report:\`\` **Reporta um usuário.**\n\n` +
         `[${emoji.indisponivel}] ${p} \`\`Petição:\`\` **Inicia uma petição.**\n\n`
       )
 
