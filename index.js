@@ -2,6 +2,9 @@ const Discord = require("discord.js")
 const config = require("./config.json")
 const fs = require('fs');
 const ms = require('ms');
+const { QuickDB } = require('quick.db')
+const db = new QuickDB();
+const mongoose = require("mongoose");
 
 const client = new Discord.Client({
   intents: [1, 512, 32768, 2, 128,
@@ -48,7 +51,9 @@ client.login(config.token)
 client.on('ready', async () => {
   console.log(`Estou online em ${client.user.username}!`)
 
-  /* let atividades = [
+  return;
+
+  let atividades = [
     `🤖 | 1º Bot oficial da Família Smurf!`,
     `❓ | Precisa de ajuda? Use /help!`,
     `☕ | Nada melhor do que um cafézinho!`,
@@ -56,9 +61,19 @@ client.on('ready', async () => {
     `📶 | Atualmente eu tenho 51 comandos. Que tal experimentar um?!`
   ]
   i = 0;
-  setInterval(() => {
+  setInterval( async() => {
+    let atv = await db.get(`atv`)
+    if(atv == 'on') return;
     client.user.setActivity(atividades[i++ % atividades.length])
-  }, ms('15s')); */
+  }, ms('15s'));
+})
+
+client.on('ready', async () => {
+  mongoose.set('strictQuery', true);
+
+  await mongoose.connect(config.mongoDB)
+  let conectado = await mongoose.connect(config.mongoDB)
+  if(conectado) console.log(`Conectado com a database com sucesso!`)
 })
 
 fs.readdir('./Eventos', (err, file) => {
