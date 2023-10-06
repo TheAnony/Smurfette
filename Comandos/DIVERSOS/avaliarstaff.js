@@ -63,7 +63,7 @@ module.exports = {
       .setDescription(`### - Staff: ${staffer} (${staffer.id})\n### Total de estrelas: ${estrelasDoStaff}\n\n### Descrição:\`\`\`${desc}\`\`\``)
 
     let button = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
+      new ButtonBuilder()
         .setCustomId('button')
         .setLabel('Responder')
         .setEmoji('💬')
@@ -71,7 +71,7 @@ module.exports = {
     )
 
     let buttonEnd = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
+      new ButtonBuilder()
         .setCustomId('button')
         .setLabel('Respondido!')
         .setEmoji('💬')
@@ -79,9 +79,8 @@ module.exports = {
         .setDisabled(true)
     )
 
-    
-    await channelSend.send({content: `||${staffer}||`, embeds: [embed], components: [button]}).then( async (msg) => {
-       await interaction.reply({ ephemeral: true, content: `Sua avaliação ao staffer ${staffer} foi enviada com sucesso!`})
+    await channelSend.send({ content: `||${staffer}||`, embeds: [embed], components: [button] }).then(async (msg) => {
+      await interaction.reply({ ephemeral: true, content: `Sua avaliação ao staffer ${staffer} foi enviada com sucesso!` })
 
         const filter = (i) => i.user.id == User.id
 
