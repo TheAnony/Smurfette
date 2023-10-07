@@ -1,4 +1,4 @@
-const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, User } = require("discord.js")
+const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType } = require("discord.js")
 const emojis = require('../../emojis.json')
 const { pegarDataNow } = require('../../funcoes');
 const warningSchema = require('../../Models/SistemaDeWarns');
