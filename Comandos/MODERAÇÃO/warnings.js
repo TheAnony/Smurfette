@@ -18,14 +18,14 @@ module.exports = {
 
     run: async (client, interaction) => {
         const membro = interaction.options.getUser('membro');
-        const warnDate = pegarDataNow();
 
         await warningSchema.findOne({ GuildID: interaction.guild.id, UserID: membro.id, Username: membro.username }).then(async(data) => {
-            if(data) {
+            if(data || data.Content.length !== 0) {
                 interaction.reply({embeds: [
                     new EmbedBuilder()
                     .setColor('Blurple')
                     .setFooter({ text: membro.username, iconURL: membro.displayAvatarURL({ dynamic: true })})
+                    .setTitle(`Warns: ${data.QuantiaDeWarns}`)
                     .setDescription(`${data.Content.map((w, i) => 
                             `**${emojis.ID} ${i + 1}:** \`${w.Data}\`\nAutor do aviso: **${w.ModeradorUsername} (${w.ModeradorID})**\nMotivo: **${w.Motivo}**\n\n`
                     ).join(" ")}`)
