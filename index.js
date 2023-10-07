@@ -38,7 +38,7 @@ client.on('interactionCreate', (interaction) => {
 
     interaction["member"] = interaction.guild.members.cache.get(interaction.user.id);
 
-    cmd.run(client, interaction)
+    cmd.run(client, interaction).catch((error) => console.log(error.code))
   }
 })
 
