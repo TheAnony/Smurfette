@@ -113,7 +113,7 @@ module.exports = {
         `[${emoji.disponivel}] ${p} \`\`Clear:\`\` **Limpa até 100 mensagens em algum canal.**\n\n` +
         `[${emoji.indisponivel}] ${p} \`\`Config-staff:\`\` **Registra e configura o cargo de Staff.**\n\n` +
         `[${emoji.disponivel}][${emoji.permrole}] ${p} \`\`Lock-unlock:\`\` **Abre ou fecha um canal.**\n\n` +
-        `[${emoji.manutencao}][${emoji.permrole}] ${p} \`\`Lock-down:\`\` **Fecha todos os canais da Família Smurf.**\n\n` +
+        `[${emoji.disponivel}][${emoji.permrole}] ${p} \`\`Lock-down:\`\` **Fecha todos os canais da Família Smurf.**\n\n` +
         `[${emoji.indisponivel}] ${p} \`\`On-offlist:\`\` **O Staff fica online/offline na lista.**\n\n` +
 
         `[${emoji.disponivel}] ${p} \`\`Permrole-config:\`\` **Configura as permroles.**\n` +
