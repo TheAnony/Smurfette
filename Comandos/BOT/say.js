@@ -14,17 +14,18 @@ module.exports = {
       required: false,
     },
     {
-        name: 'embed',
-        description: `Me faça falar no formato de embed!`,
-        type: ApplicationCommandOptionType.String,
-        required: false,
-     },
-     {
-        name: 'canal',
-        description: `Escolha um canal!`,
-        type: ApplicationCommandOptionType.Channel,
-        required: false,
-      },
+      name: 'embed',
+      description: `Me faça falar no formato de embed!`,
+      type: ApplicationCommandOptionType.String,
+      required: false,
+    },
+    {
+      name: 'canal',
+      description: `Escolha um canal!`,
+      type: ApplicationCommandOptionType.Channel,
+      channelTypes: [ChannelType.GuildText],
+      required: false,
+    },
   ],
 
   run: async (client, interaction) => {
