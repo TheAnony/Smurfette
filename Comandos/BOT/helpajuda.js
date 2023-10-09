@@ -1,6 +1,4 @@
 const { EmbedBuilder, ApplicationCommandType, StringSelectMenuBuilder, ActionRowBuilder } = require("discord.js")
-const { QuickDB } = require('quick.db')
-const db = new QuickDB();
 const emoji = {
   'disponivel': "✅",
   'manutencao': "⏳",
