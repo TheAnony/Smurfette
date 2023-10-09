@@ -18,12 +18,6 @@ module.exports = {
       required: true,
     },
     {
-      name: "tempo-sorteio-e-claim",
-      type: ApplicationCommandOptionType.String,
-      description: "Utilize este modelo: sorteio: (tempo) claim: (tempo).",
-      required: true
-    },
-    {
       name: "host",
       type: ApplicationCommandOptionType.User,
       description: "Descreva quem será o host (pessoa necessária para marcar para dar claim).",
@@ -47,6 +41,18 @@ module.exports = {
         { name: '10-ganhadores', value: '10' },
       ]
     },
+    {
+      name: "tempo-sorteio",
+      type: ApplicationCommandOptionType.String,
+      description: "Quanto tempo haverá o sorteio? (Ex.: 1 week 10 minutos)",
+      required: false
+    },
+    {
+      name: "tempo-claim",
+      type: ApplicationCommandOptionType.String,
+      description: "Quanto tempo haverá o claim? (Ex.: 1 week 10 minutos)",
+      required: false
+    },
   ],
 
   run: async (client, interaction) => {
@@ -65,10 +71,9 @@ module.exports = {
     let host = interaction.options.getUser("host");
     let quantiaWinner = interaction.options.getString("quantia-de-ganhadores");
     let click = [] || 0
-    let time = interaction.options.getString('tempo-sorteio-e-claim')
 
-    let sorteioString = getSorteioClaim(time).sorteio
-    let claimString = getSorteioClaim(time).claim
+    let sorteioString = interaction.options.getString('tempo-sorteio')
+    let claimString = interaction.options.getString('tempo-claim')
 
     let tempoSorteio = stringMS(sorteioString)
     let tempoClaim = stringMS(claimString)
