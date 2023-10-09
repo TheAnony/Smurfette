@@ -6,8 +6,6 @@ module.exports = {
   type: ApplicationCommandType.ChatInput,
 
   run: async (client, interaction) => {
-    if (interaction.user.id === "492117896672313353") return interaction.reply('Ainda não, B4LACO')
-
     let ping = Math.abs(client.ws.ping)
 
     let embed_1 = new EmbedBuilder()
