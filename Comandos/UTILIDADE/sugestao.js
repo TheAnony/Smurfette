@@ -13,6 +13,7 @@ module.exports = {
   run: async (client, interaction) => {
     try {
       const guildConfig = await GuildConfig.findOne({ guildId: interaction.guild.id });
+      const channelSugestao = client.channels.cache.get(guildConfig.canaisDeSugestoesIDs[0])
 
       if (!guildConfig?.canaisDeSugestoesIDs.length) {
         await interaction.reply({
@@ -26,7 +27,7 @@ module.exports = {
         return;
       }
 
-      if (!guildConfig.canaisDeSugestoesIDs.includes(interaction.channelId)) {
+      /* if (!guildConfig.canaisDeSugestoesIDs.includes(interaction.channelId)) {
         await interaction.reply({
           embeds: [
             new EmbedBuilder()
@@ -36,7 +37,7 @@ module.exports = {
           ]
         })
         return;
-      };
+      }; */
 
       const modal = new ModalBuilder()
         .setTitle("Digite sua sugestão")
@@ -64,7 +65,7 @@ module.exports = {
       let mensagemDeSugestao;
 
       try {
-        mensagemDeSugestao = await interaction.channel.send(`${emojis.loading} | Estou criando sua sugestão... Aguarde, por favor`);
+        mensagemDeSugestao = await channelSugestao.send(`${emojis.loading} | Estou criando sua sugestão... Aguarde, por favor`);
       } catch (error) {
         modalInteraction.editReply(`${emojis.err} | Ocorreu um erro ao criar uma sugestão para este canal! Por favor, tente novamente.`);
         return;
