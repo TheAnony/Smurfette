@@ -10,8 +10,6 @@ module.exports = {
     type: ApplicationCommandType.ChatInput,
 
     run: async (client, interaction) => {
-        let pagAtual = 'pag1'
-
         let rowPag1 = new ActionRowBuilder().addComponents(
             new ButtonBuilder()
                 .setEmoji("◀️")
