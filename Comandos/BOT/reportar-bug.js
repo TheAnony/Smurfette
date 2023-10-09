@@ -56,8 +56,8 @@ module.exports = {
                 },
             )
 
-        link ? embed.setImage(link) : null
-        img ? embed.setImage(img) : null
+        link && embed.setImage(link);
+        img && embed.setImage(img);
 
         try {
             const channel = client.channels.cache.get('1134136980163281048');
