@@ -3,45 +3,38 @@ const emojis = require('../../emojis.json')
 const GuildConfig = require('../../Models/GuildConfig');
 
 module.exports = {
-    name: "config", // Coloque o nome do comando
-    description: "『 CONFIG 』.", // Coloque a descrição do comando
+    name: "config-sugestoes", // Coloque o nome do comando
+    description: "『 CONFIG 』", // Coloque a descrição do comando
     type: ApplicationCommandType.ChatInput,
     options: [
         {
-            name: 'sugestoes',
-            description: `Configure as sugestões`,
-            type: ApplicationCommandOptionType.SubcommandGroup,
+            name: 'adicionar',
+            description: '『 CONFIG 』Adicione um canal de sugestões',
+            type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
-                    name: 'adicionar',
-                    description: 'Adicione um canal de sugestões',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'canal',
-                            description: 'Escolha qual canal será configurado.',
-                            type: ApplicationCommandOptionType.Channel,
-                            channelTypes: [ChannelType.GuildText],
-                            required: true
-                        }
-                    ]
-                },
-                {
-                    name: 'remover',
-                    description: 'Remova um canal de sugestões',
-                    type: ApplicationCommandOptionType.Subcommand,
-                    options: [
-                        {
-                            name: 'canal',
-                            description: 'Escolha qual canal será configurado.',
-                            type: ApplicationCommandOptionType.Channel,
-                            channelTypes: [ChannelType.GuildText],
-                            required: true
-                        }
-                    ]
+                    name: 'canal',
+                    description: 'Escolha qual canal será configurado.',
+                    type: ApplicationCommandOptionType.Channel,
+                    channelTypes: [ChannelType.GuildText],
+                    required: true
                 }
             ]
         },
+        {
+            name: 'remover',
+            description: 'Remova um canal de sugestões',
+            type: ApplicationCommandOptionType.Subcommand,
+            options: [
+                {
+                    name: 'canal',
+                    description: '『 CONFIG 』Escolha qual canal será configurado.',
+                    type: ApplicationCommandOptionType.Channel,
+                    channelTypes: [ChannelType.GuildText],
+                    required: true
+                }
+            ]
+        }
     ],
 
     run: async (client, interaction) => {
