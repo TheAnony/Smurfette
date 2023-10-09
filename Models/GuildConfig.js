@@ -7,8 +7,13 @@ const guildConfigSchema = new Schema({
     },
 
     canaisDeSugestoesIDs: {
-        type: [String],
-        default: []
+        type: String,
+        default: null
+    },
+
+    canalModLogs: {
+        type: String,
+        default: null
     }
 });
 
