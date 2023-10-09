@@ -3,7 +3,7 @@ const { QuickDB } = require('quick.db')
 const db = new QuickDB();
 const { PaginationWrapper } = require('djs-button-pages');
 const { NextPageButton, PreviousPageButton } = require('@djs-button-pages/presets');
-const { stringMS, formatTime, pegarDataNow } = require('../../funcoes');
+const { stringMS, pegarDataNow } = require('../../funcoes');
 
 module.exports = {
     name: "banimento", // Coloque o nome do comando
