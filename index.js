@@ -51,14 +51,12 @@ client.login(config.token)
 client.on('ready', async () => {
   console.log(`Estou online em ${client.user.username}!`)
 
-  return;
-
   let atividades = [
     `🤖 | 1º Bot oficial da Família Smurf!`,
     `❓ | Precisa de ajuda? Use /help!`,
     `☕ | Nada melhor do que um cafézinho!`,
     `🧎 | Cuidando de ${client.users.cache.filter(member => !member.bot).size} usuários!`,
-    `📶 | Atualmente eu tenho 51 comandos. Que tal experimentar um?!`
+    `📶 | Atualmente eu tenho 55 comandos. Que tal experimentar um?!`
   ]
   i = 0;
   setInterval( async() => {
