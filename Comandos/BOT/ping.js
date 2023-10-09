@@ -8,19 +8,21 @@ module.exports = {
   run: async (client, interaction) => {
     let ping = Math.abs(client.ws.ping)
 
-    let embed_1 = new EmbedBuilder()
+    let embed = new EmbedBuilder()
       .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
       .setDescription(`Olá ${interaction.user}, meu ping está em \`calculando...\`.`)
       .setColor("Random");
 
-    let embed_2 = new EmbedBuilder()
-      .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
-      .setDescription(`Olá ${interaction.user}, meu ping está em \`${ping}ms\`.`)
-      .setColor("Random");
-
-    interaction.reply({ embeds: [embed_1] }).then(() => {
+    interaction.reply({ embeds: [embed] }).then(() => {
       setTimeout(() => {
-        interaction.editReply({ embeds: [embed_2] })
+        interaction.editReply({
+          embeds: [
+            new EmbedBuilder()
+              .setAuthor({ name: client.user.username, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
+              .setDescription(`Olá ${interaction.user}, meu ping está em \`${ping}ms\`.`)
+              .setColor("Random")
+        ]
+        })
       }, 2000)
     })
   }
