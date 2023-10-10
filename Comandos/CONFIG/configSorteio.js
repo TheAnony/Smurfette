@@ -176,7 +176,24 @@ module.exports = {
                     }
                 } break;
 
-                case 'add-default-time-claim': { } break;
+                case 'add-default-time-claim': {
+                    let tempo = interaction.options.getString('tempo')
+                    tempo = stringMS(tempo)
+                    if (tempo == 'err') return interaction.reply(`${emojis.err} | Tempo inserido inválido! Por favor, tente novamente`)
+                    if (tempo == 'tempo máximo excedido') return interaction.reply(`${emojis.err} | O tempo inserido excedeu o limite! Por favor, utilize um tempo que seja menor do que \`24 dias, 20 horas, 31 minutos e 23 segundos\``)
+
+                    guildSorteio.tempoClaimDefault = tempo
+                    guildSorteio.save();
+
+                    await interaction.reply({
+                        embeds: [
+                            new EmbedBuilder()
+                                .setColor('Green')
+                                .setTitle(`${emojis.checkForTitle} | O tempo de ${formatTime(tempo)} foi configurado com sucesso!`)
+                                .setDescription(`> Se deseja remover este tempo, utilize \`/config-sorteio remove-default-time-claim\`!`)
+                        ]
+                    })
+                } break;
 
                 case 'remove-default-time-claim': { } break;
 
