@@ -1,5 +1,4 @@
 const { Schema, model } = require('mongoose');
-const { randomUUID } = require('crypto')
 
 let sorteiosSchema = new Schema({
     guildId: {
