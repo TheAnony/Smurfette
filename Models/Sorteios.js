@@ -5,11 +5,8 @@ let sorteiosSchema = new Schema({
         type: String,
         required: true
     },
-    
-    sorteioId: {
-        type: String,
-        default: randomUUID
-    },
+
+    sorteioId: String,
 
     tempoSorteio: {
         type: String,
