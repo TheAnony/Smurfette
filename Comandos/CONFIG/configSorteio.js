@@ -151,7 +151,30 @@ module.exports = {
                     })
                 } break;
 
-                case 'remove-default-time-sorteio': { } break;
+                case 'remove-default-time-sorteio': {
+                    try {
+                        guildSorteio.tempoSorteioDefault = null
+                        guildSorteio.save();
+
+                        await interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setColor('Green')
+                                    .setTitle(`${emojis.checkForTitle} | O tempo padrão foi removido com sucesso!`)
+                                    .setDescription(`> Se deseja adicionar um novo tempo padrão, utilize \`/config-sorteio add-default-time-sorteio\`!`)
+                            ]
+                        })
+                    } catch (error) {
+                        await interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setColor('Red')
+                                    .setTitle(`${emojis.errForTitle} | Ocorreu um erro ao excluir o tempo padrão!`)
+                                    .setDescription(`> Por favor, tente novamente!`)
+                            ]
+                        })
+                    }
+                } break;
 
                 case 'add-default-time-claim': { } break;
 
