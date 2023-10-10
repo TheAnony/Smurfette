@@ -145,8 +145,8 @@ module.exports = {
                         embeds: [
                             new EmbedBuilder()
                                 .setColor('Green')
-                                .setTitle(`${emojis.checkForTitle} | O tempo ${formatTime(tempo)} foi configurado com sucesso!`)
-                                .setDescription(`> Se deseja remover este tempo, utilize \`/config-sorteio remove-default-time-claim\`!`)
+                                .setTitle(`${emojis.checkForTitle} | O tempo de ${formatTime(tempo)} foi configurado com sucesso!`)
+                                .setDescription(`> Se deseja remover este tempo, utilize \`/config-sorteio remove-default-time-sorteio\`!`)
                         ]
                     })
                 } break;
