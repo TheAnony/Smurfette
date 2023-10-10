@@ -27,18 +27,6 @@ module.exports = {
         return;
       }
 
-      /* if (!guildConfig.canaisDeSugestoesIDs.includes(interaction.channelId)) {
-        await interaction.reply({
-          embeds: [
-            new EmbedBuilder()
-              .setColor('Red')
-              .setTitle(`${emojis.errForTitle} | O canal não existe!`)
-              .setDescription(`> Tente mandar para algum desses canais: ${guildConfig.canaisDeSugestoesIDs.map((id) => `<#${id}>`).join(', ')}`)
-          ]
-        })
-        return;
-      }; */
-
       const modal = new ModalBuilder()
         .setTitle("Digite sua sugestão")
         .setCustomId(`sugestao-${interaction.user.id}`);
