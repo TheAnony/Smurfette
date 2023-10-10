@@ -48,6 +48,17 @@ let sorteiosSchema = new Schema({
         type: String,
         unique: true,
     },
+
+    hostId: String,
+
+    premio: String,
+
+    quantiaDeGanhadores: String,
+
+    sorteioCancelado: {
+        type: Boolean,
+        default: false
+    }
 });
 
 module.exports = model("Sorteios", sorteiosSchema)
