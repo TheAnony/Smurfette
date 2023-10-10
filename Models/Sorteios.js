@@ -33,6 +33,13 @@ let sorteiosSchema = new Schema({
         default: [],
         unique: true
     },
+
+    ganhadoresNoClaim: {
+        type: [String],
+        default: [],
+        unique: true
+    },
+
     authorId: {
         type: String,
     },
