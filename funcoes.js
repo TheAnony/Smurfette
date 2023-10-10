@@ -138,6 +138,7 @@ function stringMS(timeString) {
                                 totalMilliseconds = 'err'
                 }
         }
+        if(totalMilliseconds >= 2147483647) return 'tempo máximo excedido'
         return totalMilliseconds;
 }
 
