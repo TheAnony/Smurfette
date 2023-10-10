@@ -13,9 +13,9 @@ module.exports = {
   run: async (client, interaction) => {
     try {
       const guildConfig = await GuildConfig.findOne({ guildId: interaction.guild.id });
-      const channelSugestao = client.channels.cache.get(guildConfig.canaisDeSugestoesIDs[0])
+      const channelSugestao = client.channels.cache.get(guildConfig.canaisDeSugestoesIDs)
 
-      if (!guildConfig?.canaisDeSugestoesIDs.length) {
+      if (!guildConfig?.canaisDeSugestoesIDs) {
         await interaction.reply({
           embeds: [
             new EmbedBuilder()
