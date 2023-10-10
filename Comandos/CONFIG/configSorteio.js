@@ -200,6 +200,25 @@ module.exports = {
                         guildSorteio.tempoClaimDefault = null
                         guildSorteio.save();
 
+                        await interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setColor('Green')
+                                    .setTitle(`${emojis.checkForTitle} | O tempo padrão foi removido com sucesso!`)
+                                    .setDescription(`> Se deseja adicionar um novo tempo, utilize \`/config-sorteio add-default-time-claim\`!`)
+                            ]
+                        })
+                    } catch (error) {
+                        await interaction.reply({
+                            embeds: [
+                                new EmbedBuilder()
+                                    .setColor('Red')
+                                    .setTitle(`${emojis.errForTitle} | Ocorreu um erro ao excluir o tempo padrão!`)
+                                    .setDescription(`> Por favor, tente novamente!`)
+                            ]
+                        })
+                    }
+                } break;
                 default: break;
             }
         } catch (error) {
