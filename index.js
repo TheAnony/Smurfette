@@ -49,6 +49,7 @@ require('./handler')(client)
 client.login(config.token)
 
 client.on('ready', async () => {
+  console.time('tempo-de-inicializacao-do-bot')
   console.log(`Estou online em ${client.user.username}!`)
 
   let atividades = [
@@ -64,14 +65,17 @@ client.on('ready', async () => {
     if(atv == 'on') return;
     client.user.setActivity(atividades[i++ % atividades.length])
   }, ms('15s'));
+  console.timeEnd('tempo-de-inicializacao-do-bot')
 })
 
 client.on('ready', async () => {
+  console.time('tempo-de-inicializacao-da-database')
   mongoose.set('strictQuery', true);
 
   await mongoose.connect(config.mongoDB)
   let conectado = await mongoose.connect(config.mongoDB)
   if(conectado) console.log(`Conectado com a database com sucesso!`)
+  console.timeEnd('tempo-de-inicializacao-da-database')
 })
 
 fs.readdir('./Eventos', (err, file) => {
