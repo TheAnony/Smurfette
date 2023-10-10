@@ -195,7 +195,10 @@ module.exports = {
                     })
                 } break;
 
-                case 'remove-default-time-claim': { } break;
+                case 'remove-default-time-claim': {
+                    try {
+                        guildSorteio.tempoClaimDefault = null
+                        guildSorteio.save();
 
                 default: break;
             }
