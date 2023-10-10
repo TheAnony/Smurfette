@@ -132,7 +132,6 @@ module.exports = {
     });
 
     const coletor = mensagem.createMessageComponentCollector({ componentType: ComponentType.Button, time: tempoSorteio })
-
     coletor.on("end", (i) => {
       interaction.editReply({
         components: [
