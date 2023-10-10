@@ -3,8 +3,8 @@ const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, Acti
 const ms = require('ms');
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
-const wait = require('node:timers/promises').setTimeout
-const { formatTime, stringMS, getSorteioClaim } = require('../../funcoes')
+const emojis = require('../../emojis.json')
+const { formatTime, stringMS } = require('../../funcoes')
 
 module.exports = {
   name: "sorteio", // Coloque o nome do comando
@@ -65,7 +65,7 @@ module.exports = {
 
     if (!interaction.member.roles.cache.some(
       role => valoresGerados.includes(role.id))
-    ) return interaction.reply({ephemeral: true, content: '**VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**'})
+    ) return interaction.reply({ ephemeral: true, content: '**VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**' })
 
     let premio = interaction.options.getString("prêmio");
     let host = interaction.options.getUser("host");
@@ -73,10 +73,15 @@ module.exports = {
     let click = [] || 0
 
     let sorteioString = interaction.options.getString('tempo-sorteio')
+    if(!sorteioString) return interaction.reply(`${emojis.err} | Por favor, me informe quanto tempo terá o sorteio!`)
     let claimString = interaction.options.getString('tempo-claim')
+    if(!claimString) return interaction.reply(`${emojis.err} | Por favor, me informe quanto tempo terá o sorteio!`)
 
     let tempoSorteio = stringMS(sorteioString)
     let tempoClaim = stringMS(claimString)
+    if (tempoSorteio == 'tempo máximo excedido' && tempoClaim == 'tempo máximo excedido') return interaction.reply(`${emojis.err} | Tempo de sorteio e claim em excesso! Por favor, utilize um tempo que seja menor do que \`24 dias, 20 horas, 31 minutos e 23 segundos\`.`)
+    if (tempoSorteio == 'tempo máximo excedido') return interaction.reply(`${emojis.err} | Tempo de sorteio em excesso! Por favor, utilize um tempo que seja menor do que \`24 dias, 20 horas, 31 minutos e 23 segundos\`.`)
+    if (tempoClaim == 'tempo máximo excedido') return interaction.reply(`${emojis.err} | Tempo de claim em excesso! Por favor, utilize um tempo que seja menor do que \`24 dias, 20 horas, 31 minutos e 23 segundos\`.`)
 
     let sorteioCompleto = formatTime(tempoSorteio);
     let claimCompleto = formatTime(tempoClaim)
