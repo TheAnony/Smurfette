@@ -14,7 +14,12 @@ const guildConfigSchema = new Schema({
     canalModLogs: {
         type: String,
         default: null
-    }
+    },
+
+    canalDeSorteioID: {
+        type: String,
+        default: null
+    },
 });
 
 module.exports = model('GuildConfig', guildConfigSchema);
