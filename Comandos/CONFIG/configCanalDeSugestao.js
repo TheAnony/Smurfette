@@ -50,12 +50,12 @@ module.exports = {
             case 'adicionar': {
                 const canal = interaction.options.getChannel('canal');
 
-                if (guildConfig.canaisDeSugestoesIDs.includes(canal.id)) {
+                if (guildConfig.canaisDeSugestoesIDs === canal.id) {
                     await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} já está configurado como o canal de sugestões!` })
                     return;
                 }
 
-                guildConfig.canaisDeSugestoesIDs.push(canal.id);
+                guildConfig.canaisDeSugestoesIDs = canal.id
                 await guildConfig.save();
 
                 await interaction.reply({
@@ -71,12 +71,12 @@ module.exports = {
             case 'remover': {
                 const canal = interaction.options.getChannel('canal');
 
-                if (!guildConfig.canaisDeSugestoesIDs.includes(canal.id)) {
+                if (!guildConfig.canaisDeSugestoesIDs === canal.id) {
                     await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} não está configurado como o canal de sugestões!` })
                     return;
                 }
 
-                guildConfig.canaisDeSugestoesIDs = guildConfig.canaisDeSugestoesIDs.filter((id) => id !== canal.id);
+                guildConfig.canaisDeSugestoesIDs = null
 
                 await guildConfig.save();
 
