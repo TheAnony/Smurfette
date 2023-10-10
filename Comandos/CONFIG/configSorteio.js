@@ -138,9 +138,8 @@ module.exports = {
                     if (tempo == 'err') return interaction.reply(`${emojis.err} | Tempo inserido inválido! Por favor, tente novamente`)
                     if (tempo == 'tempo máximo excedido') return interaction.reply(`${emojis.err} | O tempo inserido excedeu o limite! Por favor, utilize um tempo que seja menor do que \`24 dias, 20 horas, 31 minutos e 23 segundos\``)
 
-                    guildSorteio.schema.path("tempoSorteio").default = `${tempo}`
-                    await guildSorteio.save();
-                    console.log(guildSorteio);
+                    guildSorteio.tempoSorteioDefault = tempo
+                    guildSorteio.save();
 
                     await interaction.reply({
                         embeds: [
