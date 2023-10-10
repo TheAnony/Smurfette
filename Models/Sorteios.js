@@ -9,8 +9,13 @@ let sorteiosSchema = new Schema({
     sorteioId: String,
 
     tempoSorteio: {
-        type: String,
-        default: String || null
+        type: Number,
+        default: null
+    },
+
+    tempoSorteioDefault: {
+        type: Number,
+        default: null
     },
 
     tempoClaim: {
