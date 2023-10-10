@@ -19,8 +19,13 @@ let sorteiosSchema = new Schema({
     },
 
     tempoClaim: {
-        type: String,
-        default: String || null
+        type: Number,
+        default: null
+    },
+
+    tempoClaimDefault: {
+        type: Number,
+        default: null
     },
 
     ganhadores: {
