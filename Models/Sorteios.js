@@ -30,7 +30,8 @@ let sorteiosSchema = new Schema({
 
     ganhadores: {
         type: [String],
-        default: []
+        default: [],
+        unique: true
     },
     authorId: {
         type: String,
