@@ -47,7 +47,6 @@ let sorteiosSchema = new Schema({
     messageId: {
         type: String,
         unique: true,
-        required: false
     },
 });
 
