@@ -49,6 +49,7 @@ require('./handler')(client)
 client.login(config.token)
 
 client.on('ready', async () => {
+  console.clear();
   console.time('tempo-de-inicializacao-do-bot')
   console.log(`Estou online em ${client.user.username}!`)
 
