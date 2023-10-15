@@ -11,7 +11,7 @@ const guildConfigSchema = new Schema({
         default: null
     },
 
-    canalModLogs: {
+    canalModLogsId: {
         type: String,
         default: null
     },
@@ -20,6 +20,11 @@ const guildConfigSchema = new Schema({
         type: String,
         default: null
     },
+
+    canalDeDivId: {
+        type: String,
+        default: null
+    }
 });
 
 module.exports = model('GuildConfig', guildConfigSchema);
