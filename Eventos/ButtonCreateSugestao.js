@@ -89,7 +89,7 @@ client.on('interactionCreate', async (interaction) => {
 
                 await alvoSugestao.save();
 
-                interaction.editReply(`${emojis.check} | Enviado upvote com sucesso!`);
+                interaction.editReply(`${emojis.check} | Enviado downvote com sucesso!`);
 
                 alvoMessageEmbed.fields[2].value = formatarResultados(
                     alvoSugestao.upvotes, alvoSugestao.downvotes
