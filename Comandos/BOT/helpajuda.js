@@ -102,30 +102,6 @@ module.exports = {
         `[${emoji.indisponivel}][${emoji.permrole}] ${s} \`\`Edit:\`\` **Edita o último sorteio.**\n`
       )
 
-    let embedStaff = new EmbedBuilder()
-      .setAuthor({ name: `Menu de ajuda, categoria: staff`, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
-      .setFooter({ text: `/help-ajuda \u2023 Página 6/8`, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
-      .setColor('#3460FF')
-      .setTitle(`- Total de comandos: ${emojis.num1}${emojis.num2}\n`)
-      .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
-      .setDescription(
-        `[${emoji.indisponivel}] ${p} \`\`Anti-raid:\`\` **Ativa o sistema de anti-raid.**\n\n` +
-        `[${emoji.disponivel}] ${p} \`\`Clear:\`\` **Limpa até 100 mensagens em algum canal.**\n\n` +
-        `[${emoji.indisponivel}] ${p} \`\`Config-staff:\`\` **Registra e configura o cargo de Staff.**\n\n` +
-        `[${emoji.disponivel}][${emoji.permrole}] ${p} \`\`Lock-unlock:\`\` **Abre ou fecha um canal.**\n\n` +
-        `[${emoji.disponivel}][${emoji.permrole}] ${p} \`\`Lock-down:\`\` **Fecha todos os canais da Família Smurf.**\n\n` +
-        `[${emoji.indisponivel}] ${p} \`\`On-offlist:\`\` **O Staff fica online/offline na lista.**\n\n` +
-
-        `[${emoji.disponivel}] ${p} \`\`Permrole-config:\`\` **Configura as permroles.**\n` +
-        `[${emoji.disponivel}] ${s} \`\`Permrole-list:\`\` **Fornece a lista das permroles ativas.**\n` +
-        `[${emoji.disponivel}] ${s} \`\`Permrole-set:\`\` **Registra ou exclui uma permrole setada.**\n` +
-        `[${emoji.disponivel}] ${s} \`\`Permrole-delete-all:\`\` **Apaga todas as permroles setadas.**\n\n` +
-
-        `[${emoji.indisponivel}][${emoji.permrole}] ${p} \`\`Slowmode:\`\` **Ativa/Desativa o modo slowmode (cooldown no chat).**\n\n` +
-        `[${emoji.indisponivel}] ${p} \`\`Sos:\`\` **Solicita auxilio da Staff de imediato (cooldown do comando: 30 minutos).**\n\n` +
-        `[${emoji.indisponivel}] ${p} \`\`Staff-list:\`\` **Mostra todos Staff's listados como online naquele momento.**\n\n`
-      )
-
     let embedUtilidade = new EmbedBuilder()
       .setAuthor({ name: `Menu de ajuda, categoria: utilidade`, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
       .setFooter({ text: `/help-ajuda \u2023 Página 7/8`, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
