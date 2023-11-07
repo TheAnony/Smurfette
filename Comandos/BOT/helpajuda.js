@@ -131,45 +131,35 @@ module.exports = {
         .setPlaceholder("Escolha a página!")
         .addOptions(
           {
-            label: "Página 1/8",
+            label: "Página 1/6",
             description: "PÁGINA SOBRE BOT [9]",
             value: "pg1"
           },
           {
-            label: "Página 2/8",
+            label: "Página 2/6",
             description: "PÁGINA SOBRE BRINCADEIRAS [3]",
             value: "pg2"
           },
           {
-            label: "Página 3/8",
+            label: "Página 3/6",
             description: "PÁGINA SOBRE DIVERSOS [3]",
             value: "pg3"
           },
           {
-            label: "Página 4/8",
+            label: "Página 4/6",
             description: "PÁGINA SOBRE INFO [5]",
             value: "pg4"
           },
           {
-            label: "Página 5/8",
+            label: "Página 5/6",
             description: "PÁGINA SOBRE SORTEIO [2]",
             value: "pg5"
           },
           {
-            label: "Página 6/8",
-            description: "PÁGINA SOBRE STAFF [12]",
+            label: "Página 6/6",
+            description: "PÁGINA SOBRE UTILIDADE [6]",
             value: "pg6"
           },
-          {
-            label: "Página 7/8",
-            description: "PÁGINA SOBRE UTILIDADE [6]",
-            value: "pg7"
-          },
-          {
-            label: "Página 8/8",
-            description: "PÁGINA SOBRE MODERAÇÃO [12]",
-            value: "pg8"
-          }
         )
     );
 
@@ -208,15 +198,7 @@ module.exports = {
             break;
 
           case 'pg6':
-            int.edit({ embeds: [embedStaff], components: [painel] })
-            break;
-
-          case 'pg7':
             int.edit({ embeds: [embedUtilidade], components: [painel] })
-            break;
-
-          case 'pg8':
-            int.edit({ embeds: [embedModeração], components: [painel] })
             break;
 
           default:
