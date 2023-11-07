@@ -117,34 +117,6 @@ module.exports = {
         `[${emoji.indisponivel}] ${p} \`\`Petição:\`\` **Inicia uma petição.**\n\n`
       )
 
-    let embedModeração = new EmbedBuilder()
-      .setAuthor({ name: `Menu de ajuda, categoria: moderação`, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
-      .setFooter({ text: `/help-ajuda \u2023 Página 8/8`, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
-      .setColor('#3460FF')
-      .setTitle(`- Total de comandos: ${emojis.num1}${emojis.num2}\n`)
-      .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
-      .setDescription(
-        `[${emoji.disponivel}] ${p} \`\`Banimento:\`\` **Punição severa!**\n` +
-        `[${emoji.disponivel}] ${s} \`\`BanPermanente:\`\` **Aplica um banimento permanente a um membro. Sem voltas!**\n` +
-        `[${emoji.disponivel}] ${s} \`\`Unban:\`\` **Retira o banimento de um membro.**\n\n` +
-        `[${emoji.disponivel}] ${s} \`\`BanList:\`\` **Fornece a lista dos membros banidos do servidor.**\n\n` +
-        `[${emoji.disponivel}] ${s} \`\`ConfigBanMessage:\`\` **Configura a mensagem que aparecerá quando um usuário for banido.**\n\n` +
-
-        `[${emoji.disponivel}] ${p} \`\`Kick:\`\` **Expulsa um membro do servidor.**\n\n` +
-
-        `[${emoji.indisponivel}] ${p} \`\`Timeout:\`\` **Deixa o membro incapaz de interagir com o servidor.**\n` +
-        `[${emoji.indisponivel}] ${s} \`\`SetTimeout:\`\` **Aplica um timeout a um membro.**\n` +
-        `[${emoji.indisponivel}] ${s} \`\`DelTimeout:\`\` **Retira o timeout aplicado em um membro.**\n\n` +
-
-        `[${emoji.indisponivel}] ${p} \`\`Sistema de warns:\`\` **Acessa o sistema de warns.**\n` +
-        `[${emoji.indisponivel}] ${s} \`\`Warn:\`\` **Aplica um warn a um membro.**\n` +
-        `[${emoji.indisponivel}] ${s} \`\`DelWarn:\`\` **Deleta o warn de um membro.**\n` +
-        `[${emoji.indisponivel}] ${s} \`\`EditWarn:\`\` **Edita o warn de um membro.**\n` +
-        `[${emoji.indisponivel}] ${s} \`\`ListWarn:\`\` **Fornece a lista de warns de um membro.**\n` +
-        `[${emoji.indisponivel}] ${s} \`\`TopWarn:\`\` **Fornece a lista dos top 10 membros com mais warns do servidor.**\n` +
-        `[${emoji.indisponivel}] ${s} \`\`ClearWarnings:\`\` **Apaga todos os warns atuais (incluindo histórico).**\n\n`
-      )
-
     let embedEnd = new EmbedBuilder()
       .setAuthor({ name: `Menu de ajuda`, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
       .setDescription(
