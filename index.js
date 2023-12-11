@@ -58,8 +58,7 @@ client.on('ready', async () => {
     `❓ | Precisa de ajuda? Use /help!`,
     `☕ | Nada melhor do que um cafézinho!`,
     `🧎 | Cuidando de ${client.users.cache.filter(member => !member.bot).size} usuários!`,
-    `📶 | Atualmente eu tenho 31
-     comandos. Que tal experimentar um?!`
+    `📶 | Atualmente eu tenho 30 comandos. Que tal experimentar um?!`
   ]
   i = 0;
   setInterval( async() => {

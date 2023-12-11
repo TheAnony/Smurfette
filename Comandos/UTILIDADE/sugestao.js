@@ -94,13 +94,13 @@ module.exports = {
         .setCustomId(`sugestao.${novaSugestao.sugestaoId}.downvote`);
 
       const approveButton = new ButtonBuilder()
-        .setEmoji(emojis.checkForTitle)
+        .setEmoji('1157663826876051498')
         .setLabel(`Aprovar`)
         .setStyle(ButtonStyle.Success)
         .setCustomId(`sugestao.${novaSugestao.sugestaoId}.approve`);
 
       const rejectButton = new ButtonBuilder()
-        .setEmoji(emojis.errForTitle)
+        .setEmoji('1157663872220680212')
         .setLabel(`Reprovar`)
         .setStyle(ButtonStyle.Danger)
         .setCustomId(`sugestao.${novaSugestao.sugestaoId}.reject`);

@@ -69,12 +69,11 @@ module.exports = {
       .setAuthor({ name: `Menu de ajuda, categoria: diversos`, iconURL: client.user.displayAvatarURL({ dynamic: true }) })
       .setFooter({ text: `/help-ajuda \u2023 Página 3/8`, iconURL: interaction.user.displayAvatarURL({ dynamic: true, size: 2048 }) })
       .setColor('#3460FF')
-      .setTitle(`- Total de comandos: ${emojis.num3}\n`)
+      .setTitle(`- Total de comandos: ${emojis.num2}\n`)
       .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setDescription(
         `[${emoji.disponivel}] ${p} \`\`Afk:\`\` **Ativa seu modo AFK! (quando digitar algo no chat, automáticamente irá desativar).**\n\n` +
-        `[${emoji.disponivel}] ${p} \`\`Avaliar-staff:\`\` **Sempre tem aquele staff gente fina, né? Avalie um staff dando até 5 estrelas!**\n\n` +
-        `[${emoji.indisponivel}] ${p} \`\`Div:\`\` **Divulgue o que quer no canal de divulgações!**\n\n`
+        `[${emoji.disponivel}] ${p} \`\`Avaliar-staff:\`\` **Sempre tem aquele staff gente fina, né? Avalie um staff dando até 5 estrelas!**\n\n`
       )
 
     let embedInfo = new EmbedBuilder()
@@ -142,7 +141,7 @@ module.exports = {
           },
           {
             label: "Página 3/6",
-            description: "PÁGINA SOBRE DIVERSOS [3]",
+            description: "PÁGINA SOBRE DIVERSOS [2]",
             value: "pg3"
           },
           {

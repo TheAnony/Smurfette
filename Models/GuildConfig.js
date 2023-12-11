@@ -24,6 +24,11 @@ const guildConfigSchema = new Schema({
     canalDeDivId: {
         type: String,
         default: null
+    },
+
+    canalDePeticoes: {
+        type: String,
+        default: null
     }
 });
 
