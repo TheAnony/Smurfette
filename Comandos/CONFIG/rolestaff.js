@@ -3,34 +3,32 @@ const emojis = require('../../emojis.json')
 const GuildConfig = require('../../Models/GuildConfig');
 
 module.exports = {
-    name: "config-petition", // Coloque o nome do comando
+    name: "config-rolestaff", // Coloque o nome do comando
     description: "『 CONFIG 』", // Coloque a descrição do comando
     type: ApplicationCommandType.ChatInput,
     options: [
         {
             name: 'adicionar',
-            description: '『 CONFIG 』Adicione um canal de petições',
+            description: '『 CONFIG 』Adicione um cargo para avaliar staff',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
-                    name: 'canal',
-                    description: 'Escolha qual canal será configurado.',
-                    type: ApplicationCommandOptionType.Channel,
-                    channelTypes: [ChannelType.GuildText],
+                    name: 'role',
+                    description: 'Escolha qual cargo será configurado.',
+                    type: ApplicationCommandOptionType.Role,
                     required: true
                 }
             ]
         },
         {
             name: 'remover',
-            description: 'Remova o canal de petições',
+            description: 'Remova o cargo de avaliar staff',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
-                    name: 'canal',
-                    description: '『 CONFIG 』Escolha qual canal será removido.',
-                    type: ApplicationCommandOptionType.Channel,
-                    channelTypes: [ChannelType.GuildText],
+                    name: 'role',
+                    description: '『 CONFIG 』Escolha qual cargo será removido.',
+                    type: ApplicationCommandOptionType.Role,
                     required: true
                 }
             ]
@@ -50,35 +48,35 @@ module.exports = {
     
             switch (subcomando) {
                 case 'adicionar': {
-                    const canal = interaction.options.getChannel('canal');
+                    const canal = interaction.options.getRole('role');
     
-                    if (guildConfig.canalDePeticoes === canal.id) {
-                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} já está configurado como o canal de petições!` })
+                    if (guildConfig.roleStaff === canal.id) {
+                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O cargo ${canal} já está configurado como o cargo de avaliar staff!` })
                         return;
                     }
     
-                    guildConfig.canalDePeticoes = canal.id
+                    guildConfig.roleStaff = canal.id
                     await guildConfig.save();
     
                     await interaction.reply({
                         embeds: [
                             new EmbedBuilder()
                                 .setColor('Green')
-                                .setTitle(`${emojis.checkForTitle} | O canal ${canal} foi configurado com sucesso!`)
-                                .setDescription(`> Se deseja remover este canal, utilize \`/config-petition remover\`!`)
+                                .setTitle(`${emojis.checkForTitle} | O cargo ${canal.name} foi configurado com sucesso!`)
+                                .setDescription(`> Se deseja remover este cargo, utilize \`/config-rolestaff remover\`!`)
                         ]
                     })
                 } break;
     
                 case 'remover': {
-                    const canal = interaction.options.getChannel('canal');
+                    const canal = interaction.options.getRole('role');
     
-                    if (!guildConfig.canalDePeticoes === canal.id) {
-                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} não foi configurado como o canal de petições!` })
+                    if (!guildConfig.roleStaff === canal.id) {
+                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O cargo ${canal} não foi configurado como o cargo de avaliar staff!` })
                         return;
                     }
     
-                    guildConfig.canalDePeticoes = null
+                    guildConfig.roleStaff = null
     
                     await guildConfig.save();
     
@@ -86,8 +84,8 @@ module.exports = {
                         embeds: [
                             new EmbedBuilder()
                                 .setColor('Green')
-                                .setTitle(`${emojis.checkForTitle} | O canal ${canal} foi removido com sucesso!`)
-                                .setDescription(`> Se deseja adicionar este canal novamente, utilize \`/config-petition adicionar\`!`)
+                                .setTitle(`${emojis.checkForTitle} | O cargo ${canal.name} foi removido com sucesso!`)
+                                .setDescription(`> Se deseja adicionar este cargo novamente, utilize \`/config-rolestaff adicionar\`!`)
                         ]
                     })
                 } break;
@@ -95,7 +93,7 @@ module.exports = {
                 default: break;
             }
         } catch (error) {
-            console.log(`ERRO NO CONFIG PETITIONS, `, error);
+            console.log(`ERRO NO CONFIG ROLE STAFF, `, error);
         }
     }
 }

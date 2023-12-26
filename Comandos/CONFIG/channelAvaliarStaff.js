@@ -3,13 +3,13 @@ const emojis = require('../../emojis.json')
 const GuildConfig = require('../../Models/GuildConfig');
 
 module.exports = {
-    name: "config-petition", // Coloque o nome do comando
+    name: "config-avaliacaostaff", // Coloque o nome do comando
     description: "『 CONFIG 』", // Coloque a descrição do comando
     type: ApplicationCommandType.ChatInput,
     options: [
         {
             name: 'adicionar',
-            description: '『 CONFIG 』Adicione um canal de petições',
+            description: '『 CONFIG 』Adicione um canal de avaliar staff',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
@@ -23,7 +23,7 @@ module.exports = {
         },
         {
             name: 'remover',
-            description: 'Remova o canal de petições',
+            description: 'Remova o canal de avaliar staff',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
@@ -52,12 +52,12 @@ module.exports = {
                 case 'adicionar': {
                     const canal = interaction.options.getChannel('canal');
     
-                    if (guildConfig.canalDePeticoes === canal.id) {
-                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} já está configurado como o canal de petições!` })
+                    if (guildConfig.canalDeAvaliarStaff === canal.id) {
+                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} já está configurado como o canal de avaliar staff!` })
                         return;
                     }
     
-                    guildConfig.canalDePeticoes = canal.id
+                    guildConfig.canalDeAvaliarStaff = canal.id
                     await guildConfig.save();
     
                     await interaction.reply({
@@ -65,7 +65,7 @@ module.exports = {
                             new EmbedBuilder()
                                 .setColor('Green')
                                 .setTitle(`${emojis.checkForTitle} | O canal ${canal} foi configurado com sucesso!`)
-                                .setDescription(`> Se deseja remover este canal, utilize \`/config-petition remover\`!`)
+                                .setDescription(`> Se deseja remover este canal, utilize \`/config-avaliacaostaff remover\`!`)
                         ]
                     })
                 } break;
@@ -73,12 +73,12 @@ module.exports = {
                 case 'remover': {
                     const canal = interaction.options.getChannel('canal');
     
-                    if (!guildConfig.canalDePeticoes === canal.id) {
-                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} não foi configurado como o canal de petições!` })
+                    if (!guildConfig.canalDeAvaliarStaff === canal.id) {
+                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} não foi configurado como o canal de avaliar staff!` })
                         return;
                     }
     
-                    guildConfig.canalDePeticoes = null
+                    guildConfig.canalDeAvaliarStaff = null
     
                     await guildConfig.save();
     
@@ -87,7 +87,7 @@ module.exports = {
                             new EmbedBuilder()
                                 .setColor('Green')
                                 .setTitle(`${emojis.checkForTitle} | O canal ${canal} foi removido com sucesso!`)
-                                .setDescription(`> Se deseja adicionar este canal novamente, utilize \`/config-petition adicionar\`!`)
+                                .setDescription(`> Se deseja adicionar este canal novamente, utilize \`/config-avaliacaostaff adicionar\`!`)
                         ]
                     })
                 } break;
@@ -95,7 +95,7 @@ module.exports = {
                 default: break;
             }
         } catch (error) {
-            console.log(`ERRO NO CONFIG PETITIONS, `, error);
+            console.log(`ERRO NO CONFIG AVALIACAO STAFF, `, error);
         }
     }
 }

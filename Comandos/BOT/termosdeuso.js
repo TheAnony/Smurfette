@@ -87,7 +87,7 @@ module.exports = {
             O bot Smurfette oferece comandos para serem usados livremente pelos usuários. No entanto, o uso indevido de certos comandos, como "/report" e "/reportar-bug", que têm um propósito mais sério, pode resultar em risco de inclusão na lista de banidos ("blacklist"). Isso significa que o autor não poderá acessar os serviços da Smurfette por tempo indeterminado. Caso ocorra tal situação, o usuário tem a opção de entrar em contato com o proprietário do bot para análise da situação.
             
             - 2. **Manipulação ou Tentativa de Dano:**
-            Qualquer tentativa de manipular, explorar ou "crashear" o bot Smurfette será tratada com seriedade. Qualquer membro que tente burlar o bot ou cause danos intencionais será imediatamente incluído na blacklist.**`)
+            Qualquer tentativa de manipular, explorar ou "crashear" o bot Smurfette será tratada com seriedade. Qualquer membro que tente burlar o bot ou cause danos intencionais será imediatamente incluído na blacklist.`)
 
         const embedPag2 = new EmbedBuilder()
             .setAuthor({ name: 'Smurfette', iconURL: client.user.displayAvatarURL({ dynaimc: true }) })
@@ -120,29 +120,33 @@ module.exports = {
             })
 
             coletor.on('collect', async (i) => {
-                console.log(i.customId)
                 switch (i.customId) {
                     case 'acessarPag2':
+                        await i.deferUpdate();
                         interaction.editReply({ embeds: [embedPag2], components: [rowPag2] })
 
                         break;
 
                     case 'voltarPag1':
+                        await i.deferUpdate();
                         interaction.editReply({ embeds: [embedPag1], components: [rowPag1] })
 
                         break;
 
                     case 'acessarPag3':
+                        await i.deferUpdate();
                         interaction.editReply({ embeds: [embedPag3], components: [rowPag3] })
 
                         break;
 
                     case 'voltarPag2':
+                        await i.deferUpdate();
                         interaction.editReply({ embeds: [embedPag2], components: [rowPag2] })
 
                         break;
 
                     case 'lido':
+                        await i.deferUpdate();
                         let objeto = await db.get(`Users_termosLido.users`)
                         if (objeto.includes(interaction.user.id)) return interaction.followUp({
                             content: `**Você já concordou com os termos de uso!**`, ephemeral: true

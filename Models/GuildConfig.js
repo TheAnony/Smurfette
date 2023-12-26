@@ -21,12 +21,22 @@ const guildConfigSchema = new Schema({
         default: null
     },
 
-    canalDeDivId: {
+    canalDePeticoes: {
         type: String,
         default: null
     },
 
-    canalDePeticoes: {
+    canalDeAvaliarStaff: {
+        type: String,
+        default: null
+    },
+
+    roleStaff: {
+        type: String,
+        default: null
+    },
+
+    chatGeral: {
         type: String,
         default: null
     }

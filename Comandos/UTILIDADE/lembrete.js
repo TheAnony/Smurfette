@@ -1,5 +1,6 @@
 const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType } = require("discord.js")
 const ms = require("ms")
+const emoji = require('../../emojis.json');
 
 module.exports = {
   name: "lembrete-remind", // Coloque o nome do comando
@@ -21,6 +22,7 @@ module.exports = {
   ],
 
   run: async (client, interaction) => {
+    if(interaction.user.id !== '430502315108335617') return interaction.reply(`${emoji.err} | Este comando ainda está em manutenção!`)
     let tempo = interaction.options.getString('tempo')
     let messagem = interaction.options.getString('messagem') || `Nenhuma mensagem inserida!`
   }

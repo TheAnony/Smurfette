@@ -1,382 +1,417 @@
-const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, ActionRowBuilder,
-  ButtonBuilder, ButtonStyle, ComponentType } = require("discord.js");
-const ms = require('ms');
-const { QuickDB } = require('quick.db')
-const db = new QuickDB();
-const emojis = require('../../emojis.json')
-const { formatTime, stringMS } = require('../../funcoes')
+const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ComponentBuilder, ButtonStyle, ComponentType, PermissionFlagsBits } = require("discord.js");
+const emojis = require('../../emojis.json');
+const GuildConfig = require('../../Models/GuildConfig');
+const Sorteios = require('../../Models/Sorteios');
+const { formatTime, stringMS } = require('../../funcoes');
+const { randomUUID } = require('crypto');
 
 module.exports = {
-  name: "sorteio", // Coloque o nome do comando
-  description: "『 SORTEIO 』Crie um sorteio no servidor", // Coloque a descrição do comando
-  type: ApplicationCommandType.ChatInput,
-  options: [
-    {
-      name: "prêmio",
-      type: ApplicationCommandOptionType.String,
-      description: "O que será o prêmio?",
-      required: true,
-    },
-    {
-      name: "host",
-      type: ApplicationCommandOptionType.User,
-      description: "Descreva quem será o host (pessoa necessária para marcar para dar claim).",
-      required: true,
-    },
-    {
-      name: "quantia-de-ganhadores",
-      type: ApplicationCommandOptionType.String,
-      description: "Descreva o que será sorteado.",
-      required: true,
-      choices: [
-        { name: '1-ganhador', value: '1' },
-        { name: '2-ganhadores', value: '2' },
-        { name: '3-ganhadores', value: '3' },
-        { name: '4-ganhadores', value: '4' },
-        { name: '5-ganhadores', value: '5' },
-        { name: '6-ganhadores', value: '6' },
-        { name: '7-ganhadores', value: '7' },
-        { name: '8-ganhadores', value: '8' },
-        { name: '9-ganhadores', value: '9' },
-        { name: '10-ganhadores', value: '10' },
-      ]
-    },
-    {
-      name: "tempo-sorteio",
-      type: ApplicationCommandOptionType.String,
-      description: "Quanto tempo haverá o sorteio? (Ex.: 1 week 10 minutos)",
-      required: false
-    },
-    {
-      name: "tempo-claim",
-      type: ApplicationCommandOptionType.String,
-      description: "Quanto tempo haverá o claim? (Ex.: 1 week 10 minutos)",
-      required: false
-    },
-  ],
+    name: "sorteio", // Coloque o nome do comando
+    description: "『 SORTEIO 』Crie um sorteio no servidor", // Coloque a descrição do comando
+    type: ApplicationCommandType.ChatInput,
+    options: [
+        {
+            name: "prêmio",
+            type: ApplicationCommandOptionType.String,
+            description: "O que será o prêmio?",
+            required: true,
+        },
+        {
+            name: "host",
+            type: ApplicationCommandOptionType.User,
+            description: "Descreva quem será o host (pessoa necessária para marcar para dar claim).",
+            required: true,
+        },
+        {
+            name: "quantia-de-ganhadores",
+            type: ApplicationCommandOptionType.String,
+            description: "Descreva o que será sorteado.",
+            required: true,
+            choices: [
+                { name: '1-ganhador', value: '1' },
+                { name: '2-ganhadores', value: '2' },
+                { name: '3-ganhadores', value: '3' },
+                { name: '4-ganhadores', value: '4' },
+                { name: '5-ganhadores', value: '5' },
+                { name: '6-ganhadores', value: '6' },
+                { name: '7-ganhadores', value: '7' },
+                { name: '8-ganhadores', value: '8' },
+                { name: '9-ganhadores', value: '9' },
+                { name: '10-ganhadores', value: '10' },
+            ]
+        },
+        {
+            name: "tempo-sorteio",
+            type: ApplicationCommandOptionType.String,
+            description: "Quanto tempo haverá o sorteio? (Ex.: 1 week 10 minutos)",
+        },
+        {
+            name: "tempo-claim",
+            type: ApplicationCommandOptionType.String,
+            description: "Quanto tempo haverá o claim? (Ex.: 1 week 10 minutos)",
+        },
+    ],
 
-  run: async (client, interaction) => {
-    let cargos = await db.get(`ArrayCargos.roles`)
-    let valoresGerados = [];
-    for (let index = 0; index < cargos.length; index++) {
-      const element = cargos[index]
-      valoresGerados.push(element)
-    }
+    run: async (client, interaction) => {
+        if(interaction.user.id !== '430502315108335617') return interaction.reply(`${emojis.err} | Comando em manutenção!`)
 
-    if (!interaction.member.roles.cache.some(
-      role => valoresGerados.includes(role.id))
-    ) return interaction.reply({ ephemeral: true, content: '**VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**' })
+        /* {
+            name: "requesitos-de-cargos",
+            type: ApplicationCommandOptionType.String,
+            description: "Ex. de cargos: \"1135395825875435631, <@810229985159807078>\"",
+        },
+        {
+            name: "requesitos",
+            type: ApplicationCommandOptionType.String,
+            description: "Descreva os requisitos para participar.",
+        } */
 
-    let premio = interaction.options.getString("prêmio");
-    let host = interaction.options.getUser("host");
-    let quantiaWinner = interaction.options.getString("quantia-de-ganhadores");
-    let click = [] || 0
+        try {
+            const guildConfig = await GuildConfig.findOne({ guildId: interaction.guild.id });
+            const sorteios = await Sorteios.findOne({ guildId: interaction.guild.id })
 
-    let sorteioString = interaction.options.getString('tempo-sorteio')
-    if(!sorteioString) return interaction.reply(`${emojis.err} | Por favor, me informe quanto tempo terá o sorteio!`)
-    let claimString = interaction.options.getString('tempo-claim')
-    if(!claimString) return interaction.reply(`${emojis.err} | Por favor, me informe quanto tempo terá o sorteio!`)
+            if (!guildConfig.canalDeSorteioID) {
+                await interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor('Red')
+                            .setTitle(`${emojis.errForTitle} | Nenhum canal de sorteio foi configurado!`)
+                            .setDescription(`> Por favor, utilize o comando \`/config-sorteios add-channel\` para adicionar um canal de sorteio!`)
+                    ]
+                })
+                return;
+            }
 
-    let tempoSorteio = stringMS(sorteioString)
-    let tempoClaim = stringMS(claimString)
-    if (tempoSorteio == 'tempo máximo excedido' && tempoClaim == 'tempo máximo excedido') return interaction.reply(`${emojis.err} | Tempo de sorteio e claim em excesso! Por favor, utilize um tempo que seja menor do que \`24 dias, 20 horas, 31 minutos e 23 segundos\`.`)
-    if (tempoSorteio == 'tempo máximo excedido') return interaction.reply(`${emojis.err} | Tempo de sorteio em excesso! Por favor, utilize um tempo que seja menor do que \`24 dias, 20 horas, 31 minutos e 23 segundos\`.`)
-    if (tempoClaim == 'tempo máximo excedido') return interaction.reply(`${emojis.err} | Tempo de claim em excesso! Por favor, utilize um tempo que seja menor do que \`24 dias, 20 horas, 31 minutos e 23 segundos\`.`)
+            const channelSorteio = client.channels.cache.get(guildConfig.canalDeSorteioID);
+            const premio = interaction.options.getString('prêmio');
+            const host = interaction.options.getUser("host");
+            let quantiaDeGanhadores = interaction.options.getString("quantia-de-ganhadores");
+            /* const requisitosDeCargos = interaction.options.getString('requesitos-de-cargos');
+            const requisitos = interaction.options.getString("requisitos"); */
+            let getTempoDeSorteio = interaction.options.getString(`tempo-sorteio`);
+            let getTempoDeClaim = interaction.options.getString(`tempo-claim`);
+            let TempoDeSorteio_Completo;
+            let TempoDeClaim_Completo;
+            let entradas = ["781003234105622568", "756185293933248681", "346324154036781056"];
 
-    let sorteioCompleto = formatTime(tempoSorteio);
-    let claimCompleto = formatTime(tempoClaim)
+            if (!getTempoDeSorteio && !sorteios.tempoSorteioDefault) {
+                await interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor('Red')
+                            .setTitle(`${emojis.errForTitle} | Nenhum tempo de sorteio e nem padrão foram definidos!`)
+                            .setDescription(`> Por favor, use novamente o comando definindo o \`tempo de sorteio\` ou configure o padrão de tempo de sorteio utilizando o comando \`/config-sorteios add-default-tempo-sorteio\``)
+                    ]
+                })
+                return;
+            }
 
-    let button = new ActionRowBuilder().addComponents(
-      new ButtonBuilder()
-        .setCustomId("botao")
-        .setEmoji("🎉")
-        .setStyle(ButtonStyle.Success),
-      new ButtonBuilder()
-        .setCustomId("cancel")
-        .setEmoji("⚪")
-        .setLabel('Cancelar')
-        .setStyle(ButtonStyle.Danger),
-      new ButtonBuilder()
-        .setCustomId("reroll")
-        .setEmoji("🔁")
-        .setLabel('Reroll')
-        .setStyle(ButtonStyle.Primary)
-        .setDisabled(true)
-    );
-    let embed = new EmbedBuilder()
-      .setAuthor({ name: `Novo sorteio!`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
-      .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-      .setTitle(premio)
-      .setDescription(
-        `\`Sorteio iniciado pelo:\` ${interaction.user.username}\n` +
-        `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
-        `\`Quantia de ganhadores:\` ${quantiaWinner}\n` +
-        `\`Entradas:\` 0\n\n` +
-        `\`Tempo do sorteio:\` ${sorteioCompleto}\n` +
-        `\`Tempo de claim:\` ${claimCompleto}\n` +
-        `Clique no botão para participar.\n**Boa sorte!!!**`
-      )
-      .setTimestamp(Date.now() + tempoSorteio)
-      .setFooter({ text: "Data do sorteio:" })
-      .setColor("Green");
+            if (!getTempoDeClaim && !sorteios.tempoClaimDefault) {
+                await interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor('Red')
+                            .setTitle(`${emojis.errForTitle} | Nenhum tempo de claim e nem padrão foram definidos!`)
+                            .setDescription(`> Por favor, use novamente o comando definindo o \`tempo de claim\` ou configure o padrão de tempo de claim utilizando o comando \`/config-sorteios add-default-tempo-claim\``)
+                    ]
+                })
+                return;
+            }
 
-    let erro = new EmbedBuilder()
-      .setColor("Red")
-      .setDescription(`Não foi possível promover o soteio!`);
+            !getTempoDeSorteio ? getTempoDeSorteio = sorteios.tempoSorteioDefault : getTempoDeSorteio = stringMS(getTempoDeSorteio), TempoDeSorteio_Completo = formatTime(getTempoDeSorteio);
+            !getTempoDeClaim ? getTempoDeClaim = sorteios.tempoClaimDefault : getTempoDeClaim = stringMS(getTempoDeClaim), TempoDeClaim_Completo = formatTime(getTempoDeClaim);
 
-    if (host.bot) return interaction.reply(`**O host não pode ser um bot! Utilize novamente o comando.\n\`Bot mencionado como host: \`${host}**`)
+            if (getTempoDeSorteio == 'err' || getTempoDeClaim == 'err') {
+                await interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor('Red')
+                            .setTitle(`${emojis.errForTitle} | Há caracteres desconhecidos no tempo definido!`)
+                            .setDescription(`> Por favor, use novamente o comando definindo o \`tempo de sorteio ou claim\` de maneira correta`)
+                    ]
+                })
+                return;
+            };
 
-    let mensagem = await interaction.reply({ embeds: [embed], components: [button] }).catch((e) => {
-      interaction.editReply({ embeds: [erro] });
-      console.log(e)
-    });
+            if (getTempoDeSorteio == 'tempo máximo excedido' || getTempoDeClaim == 'tempo máximo excedido') {
+                await interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor('Red')
+                            .setTitle(`${emojis.errForTitle} | Tempo máximo excedido!`)
+                            .setDescription(`> Por favor, use novamente o comando definindo o \`tempo de sorteio ou claim\` de maneira correta`)
+                    ]
+                })
+                return;
+            };
 
-    const coletor = mensagem.createMessageComponentCollector({ componentType: ComponentType.Button, time: tempoSorteio })
-    coletor.on("end", (i) => {
-      interaction.editReply({
-        components: [
-          new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-              .setDisabled(true)
-              .setCustomId("botao")
-              .setEmoji("🎉")
-              .setStyle(ButtonStyle.Success),
-            new ButtonBuilder()
-              .setCustomId("cancel")
-              .setEmoji("⚪")
-              .setLabel('Cancelar')
-              .setStyle(ButtonStyle.Danger)
-              .setDisabled(true),
-            new ButtonBuilder()
-              .setCustomId("reroll")
-              .setEmoji("🔁")
-              .setLabel('Reroll')
-              .setStyle(ButtonStyle.Primary)
-          )
-        ]
-      });
-    });
+            if (getTempoDeSorteio < 5000 || getTempoDeClaim < 5000) {
+                await interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor('Red')
+                            .setTitle(`${emojis.errForTitle} | Tempo mínimo não definido`)
+                            .setDescription(`> Por favor, use novamente o comando definindo o \`tempo de sorteio ou claim\` de maneira correta (tempo mínimo: 5 segundos)`)
+                    ]
+                })
+                return;
+            };
 
-    coletor.on("collect", async (i) => {
-      switch (i.customId) {
-        case "botao":
-          if (click.includes(i.user.id)) return i.reply({ content: `Olá ${i.user}, você já está participando do sorteio!`, ephemeral: true });
-          click.push(i.user.id);
-          let embed = new EmbedBuilder()
-            .setAuthor({ name: `Novo sorteio!`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
-            .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
-            .setTitle(premio)
-            .setDescription(
-              `\`Sorteio iniciado pelo:\` ${interaction.user.username}\n` +
-              `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
-              `\`Quantia de ganhadores:\` ${quantiaWinner}\n` +
-              `\`Entradas:\` ${click.length}\n\n` +
-              `\`Tempo do sorteio:\` ${sorteioCompleto}\n` +
-              `\`Tempo de claim:\` ${claimCompleto}\n` +
-              `Clique no botão para participar.\n**Boa sorte!!!**`
-            )
-            .setTimestamp(Date.now() + tempoSorteio)
-            .setFooter({ text: "Data do sorteio:" })
-            .setColor("Green");
+            if (host.bot) {
+                await interaction.reply({
+                    embeds: [
+                        new EmbedBuilder()
+                            .setColor('Red')
+                            .setTitle(`${emojis.errForTitle} | O host não pode ser um bot!`)
+                            .setDescription(`> Por favor, use novamente o comando definindo o \`host\` de maneira correta`)
+                    ]
+                })
+                return;
+            }
 
-          interaction.editReply({ embeds: [embed] });
-
-          i.reply({ content: `Olá ${i.user}, você entrou no sorteio.`, ephemeral: true });
-          break;
-
-        case "cancel":
-          if (i.member.roles.cache.some(role => valoresGerados.includes(role.id))) {
-            await i.deferUpdate();
-            await interaction.editReply({
-              embeds: [
-                new EmbedBuilder()
-                  .setDescription(
-                    `**INFORMAÇÕES:**\n` +
-                    `\`Sorteio iniciado pelo:\` ${interaction.user.username}\n` +
-                    `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
-                    `\`Quantia de ganhadores:\` ${quantiaWinner}\n` +
-                    `\`Entradas:\` ${click.length}\n` +
-                    `\`Tempo do sorteio:\` ${sorteioCompleto}\n` +
-                    `\`Tempo de claim:\` ${claimCompleto}\n` +
-                    `Clique no botão para participar.\n**Boa sorte!!!**`)
-              ], content: `**SORTEIO CANCELADO!**`, components: [
-                new ActionRowBuilder().addComponents(
-                  new ButtonBuilder()
-                    .setDisabled(true)
-                    .setCustomId("botao")
+            let button = new ActionRowBuilder().addComponents(
+                new ButtonBuilder()
+                    .setCustomId("entrada")
                     .setEmoji("🎉")
                     .setStyle(ButtonStyle.Success),
-                  new ButtonBuilder()
-                    .setCustomId("cancel")
-                    .setEmoji("⚪")
+                new ButtonBuilder()
+                    .setCustomId("cancelar")
+                    .setEmoji("1157663872220680212")
                     .setLabel('Cancelar')
-                    .setStyle(ButtonStyle.Danger)
-                    .setDisabled(true),
-                  new ButtonBuilder()
-                    .setCustomId("reroll")
-                    .setEmoji("🔁")
-                    .setLabel('Reroll')
-                    .setStyle(ButtonStyle.Primary)
-                    .setDisabled(true)
+                    .setStyle(ButtonStyle.Danger),
+            );
+
+            let embed = new EmbedBuilder()
+                .setAuthor({ name: `Novo sorteio!`, iconURL: interaction.guild.iconURL({ dynamic: true }) })
+                .setThumbnail(interaction.guild.iconURL({ dynamic: true }))
+                .setTitle(premio)
+                .setDescription(
+                    `\`Sorteio iniciado pelo:\` ${interaction.user.username}\n` +
+                    `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
+                    `\`Quantia de ganhadores:\` ${quantiaDeGanhadores}\n` +
+                    `\`Entradas:\` 0\n\n` +
+                    `\`Tempo do sorteio:\` ${TempoDeSorteio_Completo}\n` +
+                    `\`Tempo de claim:\` ${TempoDeClaim_Completo}\n` +
+                    `Clique no botão \`🎉\` para participar.\n**Boa sorte!!!**`
                 )
-              ]
-            });
-            await db.delete(`host`)
-            await db.set(`cancelarSorteio`, true)
-          }
-          break;
+                .setTimestamp()
+                .setFooter({ text: "Data do sorteio:" })
+                .setColor("Green");
 
-        default:
-          break;
-      }
-    });
+            //  errors: ['time']
 
-    setTimeout(async () => {
-      if (quantiaWinner == '1') {
-        // UM GANHADOR - UM GANHADOR - UM GANHADOR - UM GANHADOR - UM GANHADOR
-        if (await db.get(`cancelarSorteio`) == true) return await db.delete(`cancelarSorteio`)
+            let mensagemDoSorteio;
 
-        let ganhador = click[Math.floor(Math.random() * click.length)];
+            interaction.deferReply({ ephemeral: true })
 
-        if (click.length == 0) return interaction.followUp(`\n**SORTEIO CANCELADO!**\nNão houveram participantes no sorteio \`${premio}\`.`);
-
-        interaction.followUp(`**Parabéns <@${ganhador}> você ganhou o sorteio: \`${premio}\`.\nDigite no chat-geral: "${host} claim" para resgatar seu prêmio!**`)
-        await db.set(`host`, host.id)
-        await db.set(`sorteioIniciado`, true)
-        await db.set(`tempoClaim`, tempoClaim)
-        await db.set(`ganhadorSorteio`, {
-          ganhadores: [ganhador]
-        })
-        await db.add(`sorteioID`, 1)
-
-        setTimeout(async () => {
-          await db.delete(`tempoClaim`)
-          await db.delete(`sorteioIniciado`)
-        }, tempoClaim);
-
-      } else {
-        // MAIS DE UM GANHADOR - MAIS DE UM GANHADOR - MAIS DE UM GANHADOR - MAIS DE UM GANHADOR
-        if (await db.get(`cancelarSorteio`) == true) return await db.delete(`cancelarSorteio`)
-
-        let much = parseInt(quantiaWinner)
-        if (click.length <= much) return interaction.followUp(`\n**SORTEIO CANCELADO!**\nNão houveram participantes necessários para realizar o sorteio \`${premio}\`.\n\`Mínimo de participantes para este sorteio: ${much + 1}\``);
-        let winners = [];
-        let w = [];
-
-        while (winners.length < much) {
-          let ganhadores = click[Math.floor(Math.random() * click.length)]
-          if (!winners.includes(ganhadores)) winners.push(ganhadores);
-        }
-
-        winners.forEach(e => {
-          w.push(`<@!${e}>`)
-        });
-
-        interaction.followUp(`**Parabéns ${w.join(', ')} vocês ganharam o sorteio: \`${premio}\`.\nDigitem no chat-geral: "${host} claim" para resgatarem seu prêmio!**`)
-        await db.set(`host`, host.id)
-        await db.set(`tempoClaim`, tempoClaim)
-        await db.set(`sorteioIniciado`, true)
-        await db.set(`ganhadorSorteio`, {
-          ganhadores: [winners]
-        })
-        await db.add(`sorteioID`, 1)
-
-        setTimeout(async () => {
-          await db.delete(`tempoClaim`)
-          await db.delete(`sorteioIniciado`)
-        }, tempoClaim);
-      }
-    }, tempoSorteio);
-
-    const coll = mensagem.createMessageComponentCollector({ componentType: ComponentType.Button, time: ms('2h') })
-    coll.on('end', async (i) => {
-      interaction.editReply({
-        components: [
-          new ActionRowBuilder().addComponents(
-            new ButtonBuilder()
-              .setDisabled(true)
-              .setCustomId("botao")
-              .setEmoji("🎉")
-              .setStyle(ButtonStyle.Success),
-            new ButtonBuilder()
-              .setCustomId("cancel")
-              .setEmoji("⚪")
-              .setLabel('Cancelar')
-              .setStyle(ButtonStyle.Danger)
-              .setDisabled(true),
-            new ButtonBuilder()
-              .setCustomId("reroll")
-              .setEmoji("🔁")
-              .setLabel('Reroll')
-              .setStyle(ButtonStyle.Primary)
-              .setDisabled(true)
-          )
-        ]
-      });
-
-    })
-
-    // Reroll command
-    coll.on("collect", async (i) => {
-      if (i.member.roles.cache.some(role => valoresGerados.includes(role.id)) && i.customId === 'reroll') {
-        let ganhadores = await db.get(`ganhadorSorteio.ganhadores`)
-        if (typeof ganhadores === 'object') ganhadores = ganhadores.flat()
-        if (click.length == 0 || !ganhadores) return;
-        if (quantiaWinner == '1') {
-          let ganhadores = await db.get(`ganhadorSorteio.ganhadores`)
-          ganhadores = ganhadores.flat()
-          let tripleAgent = click.filter(id => id !== ganhadores[0])
-          let newWinner = tripleAgent[Math.floor(Math.random() * tripleAgent.length)]
-          await db.set(`host`, host.id)
-          await db.set(`tempoClaim`, tempoClaim)
-          await db.set(`ganhadorSorteio`, {
-            ganhadores: [newWinner]
-          })
-
-          await i.deferUpdate()
-          await interaction.followUp(`**Novo ganhador: <@${newWinner}>**`)
-
-        } else {
-          let ganhadores = await db.get(`ganhadorSorteio.ganhadores`)
-          if (typeof ganhadores === 'object') ganhadores = ganhadores.flat()
-          let tripleAgent = click.filter(id => !ganhadores.includes(id))
-          if (typeof tripleAgent === 'object') tripleAgent = tripleAgent.flat()
-          console.log(tripleAgent);
-          console.log(ganhadores);
-          let newWinners = tripleAgent[Math.floor(Math.random() * tripleAgent.length)]
-          let w = [];
-          let winners = [];
-          let much = parseInt(quantiaWinner)
-
-          while (winners.length < much) {
-            let ganhadores = tripleAgent[Math.floor(Math.random() * tripleAgent.length)]
-            if (!winners.includes(ganhadores)) winners.push(ganhadores);
-          }
-
-          winners.forEach(e => {
-            w.push(`<@!${e}>`)
-          });
-
-          for (let i = 0; i < ganhadores.length; i++) {
-            let newGanha = newWinners[i];
-            let ganha = ganhadores.filter(user => !ganhadores.includes(user))
-            let novosGanha = ganha[Math.floor(Math.random() * ganha.length)]
-            if (!ganhadores.includes(newGanha)) {
-              newWinners = [];
-              newWinners.push(novosGanha)
+            try {
+                mensagemDoSorteio = await channelSorteio.send(`${emojis.loading} | Estou criando um sorteio, aguarde...`);
+                interaction.editReply(`${emojis.loading} | Estou criando seu sorteio, aguarde, por favor!`);
+            } catch (error) {
+                mensagemDoSorteio.edit(`${emojis.err} | Ocorreu um erro ao criar uma sorteio para este canal! Por favor, tente novamente.`);
+                console.log(error);
+                return;
             }
-          }
+            const idDoSorteio = randomUUID()
 
-          await db.set(`host`, host.id)
-          await db.set(`tempoClaim`, tempoClaim)
-          await db.set(`ganhadorSorteio`, {
-            ganhadores: newWinners
-          })
+            let novoSorteio = new Sorteios({
+                guildId: interaction.guild.id,
+                sorteioId: idDoSorteio,
+            });
 
-          await i.deferUpdate()
-          await interaction.followUp(`**Novos ganhadores: ${w.join(', ')}**`)
+            Object.assign(novoSorteio, {
+                tempoSorteio: getTempoDeSorteio,
+                tempoClaim: getTempoDeClaim,
+                authorId: interaction.user.id,
+                messageId: mensagemDoSorteio.id,
+                hostId: host.id,
+                premio: premio,
+                quantiaDeGanhadores: quantiaDeGanhadores,
+            })
+            /**
+             * tempoSorteio: getTempoDeSorteio,
+                tempoClaim: getTempoDeClaim,
+                authorId: interaction.user.id,
+                messageId: mensagemDoSorteio.id,
+                hostId: host.id,
+                premio: premio,
+                quantiaDeGanhadores: quantiaDeGanhadores,
+             */
+
+            await novoSorteio.save();
+
+            await interaction.editReply(`${emojis.check} | Sorteio criado com sucesso! Caso queria \`finalizar\`, \`editar\` ou \`gerar novos ganhadores\`, utilize este ID: \`\`${idDoSorteio}\`\`. E não se preocupe caso perca este ID, ele estará disponível no conteúdo do sorteio também!`);
+
+            mensagemDoSorteio.edit({
+                content: `**ID DO SORTEIO: ${idDoSorteio}**`,
+                embeds: [embed],
+                components: [button]
+            })
+
+            const coletorDoSorteio = mensagemDoSorteio.createMessageComponentCollector({ componentType: ComponentType.Button, time: getTempoDeSorteio })
+
+            coletorDoSorteio.on("end", (i) => {
+                mensagemDoSorteio.edit({
+                    components: [
+                        new ActionRowBuilder().addComponents(
+                            new ButtonBuilder()
+                                .setCustomId("entrada")
+                                .setEmoji("🎉")
+                                .setStyle(ButtonStyle.Success)
+                                .setDisabled(true),
+                            new ButtonBuilder()
+                                .setCustomId("cancelar")
+                                .setEmoji("1157663872220680212")
+                                .setLabel('Cancelar')
+                                .setStyle(ButtonStyle.Danger)
+                                .setDisabled(true),
+                        )
+                    ]
+                });
+            });
+
+            coletorDoSorteio.on("collect", async (i) => {
+                switch (i.customId) {
+                    case 'entrada': {
+                        const participante = i.user
+                        if (entradas.includes(participante.id)) return i.reply({ content: `Olá ${participante}, você já está participando do sorteio!`, ephemeral: true });
+
+                        entradas.push(participante.id)
+                        i.reply({ content: `Olá ${participante}, você entrou no sorteio!`, ephemeral: true });
+
+                        embed = embed.setDescription(
+                            `\`Sorteio iniciado pelo:\` ${interaction.user.username}\n` +
+                            `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
+                            `\`Quantia de ganhadores:\` ${quantiaDeGanhadores}\n` +
+                            `\`Entradas:\` ${entradas.length}\n\n` +
+                            `\`Tempo do sorteio:\` ${TempoDeSorteio_Completo}\n` +
+                            `\`Tempo de claim:\` ${TempoDeClaim_Completo}\n` +
+                            `Clique no botão \`🎉\` para participar.\n**Boa sorte!!!**`
+                        )
+
+                        mensagemDoSorteio.edit({ embeds: [embed] })
+                    } break;
+
+                    case 'cancelar': {
+                        if (!i.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: `**Você não tem permissão de utilizar esse comando! Permissão necessária: \`Adiministrador\`**`, ephemeral: true })
+                        await i.deferUpdate();
+                        embed = embed.setDescription(
+                            `**INFORMAÇÕES:**\n` +
+                            `\`Sorteio iniciado pelo:\` ${interaction.user.username}\n` +
+                            `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
+                            `\`Quantia de ganhadores:\` ${quantiaDeGanhadores}\n` +
+                            `\`Entradas:\` ${entradas.length}\n\n` +
+                            `\`Tempo do sorteio:\` ${TempoDeSorteio_Completo}\n` +
+                            `\`Tempo de claim:\` ${TempoDeClaim_Completo}\n`)
+
+                        embed.data.color = 0xff6161
+
+                        await mensagemDoSorteio.edit({
+                            embeds: [embed], content: `**SORTEIO CANCELADO!**`, components: [
+                                new ActionRowBuilder().addComponents(
+                                    new ButtonBuilder()
+                                        .setCustomId("entrada")
+                                        .setEmoji("🎉")
+                                        .setStyle(ButtonStyle.Success)
+                                        .setDisabled(true),
+                                    new ButtonBuilder()
+                                        .setCustomId("cancelar")
+                                        .setEmoji("1157663872220680212")
+                                        .setLabel('Cancelar')
+                                        .setStyle(ButtonStyle.Danger)
+                                        .setDisabled(true),
+                                )
+                            ]
+                        })
+                        novoSorteio.sorteioCancelado = true,
+                            await novoSorteio.save();
+                    } break;
+                    default: break;
+                }
+            })
+
+            setTimeout(async () => {
+                if (novoSorteio.sorteioCancelado == true) return;
+                switch (quantiaDeGanhadores) {
+                    case '1': {
+                        if (entradas.length == 0) {
+                            embed.data.description = `**INFORMAÇÕES:**\n` +
+                                `\`Sorteio iniciado pelo:\` ${interaction.user.username}\n` +
+                                `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
+                                `\`Quantia de ganhadores:\` ${quantiaDeGanhadores}\n` +
+                                `\`Entradas:\` ${entradas.length}\n\n` +
+                                `\`Tempo do sorteio:\` ${TempoDeSorteio_Completo}\n` +
+                                `\`Tempo de claim:\` ${TempoDeClaim_Completo}\n`
+
+                            mensagemDoSorteio.edit({ content: `**SORTEIO CANCELADO!** Não houveram participantes o suficiente para realizar o sorteio.`, embeds: [embed], components: [] })
+
+                            await Sorteios.findOneAndRemove({ guildId: interaction.guild.id, sorteioId: idDoSorteio })
+                            return;
+                        }
+                        let ganhadorFinal = entradas[Math.floor(Math.random() * entradas.length)]
+
+                        novoSorteio.ganhadores.push(ganhadorFinal);
+                        await novoSorteio.save();
+
+                        mensagemDoSorteio.reply(`**Parabéns <@${ganhadorFinal}> você ganhou o sorteio: \`${premio}\`.\nDigite no chat-geral: "${host} claim" para resgatar seu prêmio!**`)
+
+                        setTimeout(() => {
+                            if (novoSorteio.ganhadoresNoClaim) {
+                                mensagemDoSorteio.reply(`${emojis.err} | O ganhador ${novoSorteio.ganhadores[0]} não deu claim!`)
+                            }
+                        }, getTempoDeClaim);
+
+                    } break;
+
+                    default: {
+                        if (entradas.length == 0) {
+                            embed.data.description = `**INFORMAÇÕES:**\n` +
+                                `\`Sorteio iniciado pelo:\` ${interaction.user.username}\n` +
+                                `\`Host (pessoa necessária para dar claim):\` ${host}\n` +
+                                `\`Quantia de ganhadores:\` ${quantiaDeGanhadores}\n` +
+                                `\`Entradas:\` ${entradas.length}\n\n` +
+                                `\`Tempo do sorteio:\` ${TempoDeSorteio_Completo}\n` +
+                                `\`Tempo de claim:\` ${TempoDeClaim_Completo}\n`
+
+                            mensagemDoSorteio.edit({ content: `**SORTEIO CANCELADO!** Não houveram participantes o suficiente para realizar o sorteio.`, embeds: [embed], components: [] })
+
+                            await Sorteios.findOneAndRemove({ guildId: interaction.guild.id, sorteioId: idDoSorteio })
+                            return;
+                        }
+                        let ganhadorFinal = []
+                        let index = 0;
+
+                        while (index < Number(quantiaDeGanhadores)) {
+                            let sortudo = entradas[Math.floor(Math.random() * entradas.length)]
+                            if (ganhadorFinal.includes(sortudo)) return;
+                            ganhadorFinal.push(sortudo)
+
+                            novoSorteio.ganhadores.push(sortudo);
+                            novoSorteio.ganhadoresNoClaim.push(sortudo)
+                            await novoSorteio.save();
+                            index++
+                        }
+
+                        let ganhadoresParaMensagem = ganhadorFinal.map(id => {
+                            return `<@${id}> `
+                        })
+
+                        mensagemDoSorteio.reply(`**Parabéns ${ganhadoresParaMensagem} vocês ganharam o sorteio: \`${premio}\`.\nDigite no chat-geral: "${host} claim" para resgatarem seu prêmio!**`)
+
+                        setTimeout(() => {
+                            if (novoSorteio.ganhadoresNoClaim) {
+                                let novoSorteioGanhadores = novoSorteio.ganhadores.map(id => {
+                                    return `<@${id}> `
+                                })
+                                mensagemDoSorteio.reply(`${emojis.err} | Os ganhadores ${novoSorteioGanhadores} não deram claim!`)
+                            }
+                        }, getTempoDeClaim);
+                    } break;
+                }
+            }, getTempoDeSorteio);
+
+        } catch (error) {
+            console.log(`ERRO NO COMANDO DE SORTEIO: /sorteio:`, error);
         }
-      }
-    })
-  }
+    }
 }

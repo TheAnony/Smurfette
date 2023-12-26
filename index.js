@@ -5,6 +5,8 @@ const ms = require('ms');
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
 const mongoose = require("mongoose");
+const emojis = require('./emojis.json');
+const GuildConfig = require('./Models/GuildConfig');
 
 const client = new Discord.Client({
   intents: [1, 512, 32768, 2, 128,
@@ -29,8 +31,14 @@ const client = new Discord.Client({
 
 module.exports = client
 
-client.on('interactionCreate', (interaction) => {
+client.on('interactionCreate', async interaction => {
   if (interaction.type === Discord.InteractionType.ApplicationCommand) {
+    if (interaction.guild.id === '1168357330220503111' /*ID do servidor da AGP*/ && interaction.user.id !== '430502315108335617') return interaction.reply(`${emojis.err} | Desculpe, mas você não tem permissão de usar meus comandos aqui! Apenas na **Família Smurf**.`);
+
+    const guildConfig = await GuildConfig.findOne({ guildId: interaction.guild.id });
+    if (!guildConfig) new GuildConfig({
+      guildId: interaction.guild.id
+    })
 
     const cmd = client.slashCommands.get(interaction.commandName);
 
@@ -61,9 +69,9 @@ client.on('ready', async () => {
     `📶 | Atualmente eu tenho 30 comandos. Que tal experimentar um?!`
   ]
   i = 0;
-  setInterval( async() => {
+  setInterval(async () => {
     let atv = await db.get(`atv`)
-    if(atv == 'on') return;
+    if (atv == 'on') return;
     client.user.setActivity(atividades[i++ % atividades.length])
   }, ms('15s'));
   console.timeEnd('tempo-de-inicializacao-do-bot')
@@ -75,7 +83,7 @@ client.on('ready', async () => {
 
   await mongoose.connect(config.mongoDB)
   let conectado = await mongoose.connect(config.mongoDB)
-  if(conectado) console.log(`Conectado com a database com sucesso!`)
+  if (conectado) console.log(`Conectado com a database com sucesso!`)
   console.timeEnd('tempo-de-inicializacao-da-database')
 })
 

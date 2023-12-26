@@ -3,7 +3,7 @@ const { Schema, model } = require('mongoose');
 let sorteiosSchema = new Schema({
     guildId: {
         type: String,
-        required: true
+        require: true
     },
 
     sorteioId: String,
@@ -31,13 +31,13 @@ let sorteiosSchema = new Schema({
     ganhadores: {
         type: [String],
         default: [],
-        unique: true
+        sparse: true,
     },
 
     ganhadoresNoClaim: {
         type: [String],
         default: [],
-        unique: true
+        sparse: true,
     },
 
     authorId: {

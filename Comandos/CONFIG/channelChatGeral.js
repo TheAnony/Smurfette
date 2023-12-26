@@ -3,13 +3,13 @@ const emojis = require('../../emojis.json')
 const GuildConfig = require('../../Models/GuildConfig');
 
 module.exports = {
-    name: "config-petition", // Coloque o nome do comando
+    name: "config-chatgeral", // Coloque o nome do comando
     description: "『 CONFIG 』", // Coloque a descrição do comando
     type: ApplicationCommandType.ChatInput,
     options: [
         {
             name: 'adicionar',
-            description: '『 CONFIG 』Adicione um canal de petições',
+            description: '『 CONFIG 』Adicione um canal',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
@@ -23,7 +23,7 @@ module.exports = {
         },
         {
             name: 'remover',
-            description: 'Remova o canal de petições',
+            description: 'Remova o canal',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
                 {
@@ -52,20 +52,20 @@ module.exports = {
                 case 'adicionar': {
                     const canal = interaction.options.getChannel('canal');
     
-                    if (guildConfig.canalDePeticoes === canal.id) {
-                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} já está configurado como o canal de petições!` })
+                    if (guildConfig.chatGeral === canal.id) {
+                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} já está configurado como o chat geral!` })
                         return;
                     }
     
-                    guildConfig.canalDePeticoes = canal.id
+                    guildConfig.chatGeral = canal.id
                     await guildConfig.save();
     
                     await interaction.reply({
                         embeds: [
                             new EmbedBuilder()
                                 .setColor('Green')
-                                .setTitle(`${emojis.checkForTitle} | O canal ${canal} foi configurado com sucesso!`)
-                                .setDescription(`> Se deseja remover este canal, utilize \`/config-petition remover\`!`)
+                                .setTitle(`${emojis.checkForTitle} | O canal ${canal.name} foi configurado com sucesso!`)
+                                .setDescription(`> Se deseja remover este canal, utilize \`/config-chatgeral remover\`!`)
                         ]
                     })
                 } break;
@@ -73,12 +73,12 @@ module.exports = {
                 case 'remover': {
                     const canal = interaction.options.getChannel('canal');
     
-                    if (!guildConfig.canalDePeticoes === canal.id) {
-                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} não foi configurado como o canal de petições!` })
+                    if (!guildConfig.chatGeral === canal.id) {
+                        await interaction.reply({ ephemeral: true, content: `${emojis.err} | Ei! O canal ${canal} não foi configurado como o chat geral!` })
                         return;
                     }
     
-                    guildConfig.canalDePeticoes = null
+                    guildConfig.chatGeral = null
     
                     await guildConfig.save();
     
@@ -86,8 +86,8 @@ module.exports = {
                         embeds: [
                             new EmbedBuilder()
                                 .setColor('Green')
-                                .setTitle(`${emojis.checkForTitle} | O canal ${canal} foi removido com sucesso!`)
-                                .setDescription(`> Se deseja adicionar este canal novamente, utilize \`/config-petition adicionar\`!`)
+                                .setTitle(`${emojis.checkForTitle} | O canal ${canal.name} foi removido com sucesso!`)
+                                .setDescription(`> Se deseja adicionar este canal novamente, utilize \`/config-chatgeral adicionar\`!`)
                         ]
                     })
                 } break;
@@ -95,7 +95,7 @@ module.exports = {
                 default: break;
             }
         } catch (error) {
-            console.log(`ERRO NO CONFIG PETITIONS, `, error);
+            console.log(`ERRO NO CONFIG CHATGERAL, `, error);
         }
     }
 }

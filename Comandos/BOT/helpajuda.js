@@ -43,7 +43,7 @@ module.exports = {
       .setDescription(
         `[${emoji.disponivel}] ${p} \`\`Bot-info:\`\` **Veja minhas informações.**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Help-ajuda:\`\` **Ei, é o comando que está usando!**\n\n` +
-        `[${emoji.disponivel}] ${p} \`\`Politica-de-privacidade:\`\` **Fornece o documento de política de privacidade.**\n\n` +
+        `[${emoji.indisponivel}] ${p} \`\`Politica-de-privacidade:\`\` **Fornece o documento de política de privacidade.**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Ping:\`\` **Veja o meu ping.**\n\n` +
         `[${emoji.indisponivel}] ${p} \`\`Donate:\`\` **Faça um donate e darei o meu melhor sempre!**\n\n` +
         `[${emoji.disponivel}] ${p} \`\`Termos-de-uso:\`\` **Fornece o documento sobre os meus termos de uso.**\n\n` +
@@ -97,7 +97,7 @@ module.exports = {
       .setTitle(`- Total de comandos: ${emojis.num2}\n`)
       .setThumbnail(client.user.displayAvatarURL({ dynamic: true }))
       .setDescription(
-        `[${emoji.disponivel}][${emoji.permrole}] ${p} \`\`Sorteio:\`\` **Começa um sorteio.**\n` +
+        `[${emoji.manutencao}][${emoji.permrole}] ${p} \`\`Sorteio:\`\` **Começa um sorteio.**\n` +
         `[${emoji.indisponivel}][${emoji.permrole}] ${s} \`\`Edit:\`\` **Edita o último sorteio.**\n`
       )
 

@@ -26,7 +26,6 @@ function petitionProgressBar(assinaturasAtuais, metaDeAssinaturas) {
 
        let squaresFull = Math.round(assinaturasAtuais * 12 / metaDeAssinaturas)
        let squaresEmpty = 12 - squaresFull || 0
-       console.log(squaresFull, squaresEmpty);
 
        let bar = (pb.middleFull.repeat(squaresFull)) + (pb.middleEmpty.repeat(squaresEmpty))
 

@@ -1,4 +1,4 @@
-const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, ChannelType } = require("discord.js")
+const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } = require("discord.js")
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
 
@@ -16,13 +16,7 @@ module.exports = {
     ],
 
     run: async (client, interaction) => {
-        let cargos = await db.get(`ArrayCargos.roles`)
-        let valoresGerados = [];
-        for (let index = 0; index < cargos.length; index++) {
-            const element = cargos[index]
-            valoresGerados.push(element)
-        }
-        if (!interaction.member.roles.cache.some(role => valoresGerados.includes(role.id))) return interaction.reply('**VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**');
+        if (!interaction.member.permissions.has(PermissionFlagsBits.ManageMessages)) return interaction.reply({ content: `**Você não tem permissão de utilizar esse comando! Permissão necessária: \`Gerenciar Mensagens\`**`, ephemeral: true })
 
         let channelCount = await db.get(`channelCount`);
         let canal = interaction.options.getChannel('canal')

@@ -1,4 +1,4 @@
-const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, ChannelType } = require("discord.js")
+const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } = require("discord.js")
 const emojis = require('../../emojis.json')
 const GuildConfig = require('../../Models/GuildConfig');
 const Sorteios = require('../../Models/Sorteios')
@@ -79,9 +79,7 @@ module.exports = {
 
     run: async (client, interaction) => {
         try {
-
-            let cargos = await db.get(`ArrayCargos.roles`)
-            if (!interaction.member.roles.cache.some(role => cargos.includes(role.id))) return interaction.reply({ ephemeral: true, content: `${emojis.err} | **VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**` })
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: `**Você não tem permissão de utilizar esse comando! Permissão necessária: \`Adiministrador\`**`, ephemeral: true })
 
             let guildConfig = await GuildConfig.findOne({ guildId: interaction.guild.id });
             let guildSorteio = await Sorteios.findOne({ guildId: interaction.guild.id })

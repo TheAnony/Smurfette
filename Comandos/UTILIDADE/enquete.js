@@ -1,5 +1,6 @@
 const { ApplicationCommandType, ApplicationCommandOptionType, EmbedBuilder  } = require("discord.js")
 const ms = require('ms')
+const emoji = require('../../emojis.json');
 
 module.exports = {
   name: 'enquete', // Coloque o nome do comando
@@ -33,14 +34,7 @@ module.exports = {
 ],
 
   run: async (client, interaction) => {
-    let cargos = await db.get(`ArrayCargos.roles`)
-    let valoresGerados = [];
-        for (let index = 0; index < cargos.length; index++) {
-          const element = cargos[index]
-          valoresGerados.push(element)
-
-        }
-    if(!interaction.member.roles.cache.some(role => valoresGerados.includes(role.id))) return interaction.reply('**VOCÊ NÃO TEM A PERMROLE PARA UTILIZAR ESSE COMANDO!**')
+    if(interaction.user.id !== '430502315108335617') return interaction.reply(`${emoji.err} | Este comando ainda está em manutenção!`)
 
    const canal = interaction.options.getChannel('canal') || interaction.channel;
    const title = interaction.options.getString('título');

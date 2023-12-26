@@ -1,4 +1,4 @@
-const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, ChannelType } = require("discord.js")
+const { EmbedBuilder, ApplicationCommandType, ApplicationCommandOptionType, ChannelType, PermissionFlagsBits } = require("discord.js")
 const emojis = require('../../emojis.json')
 const GuildConfig = require('../../Models/GuildConfig');
 
@@ -38,6 +38,8 @@ module.exports = {
     ],
 
     run: async (client, interaction) => {
+        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) return interaction.reply({ content: `**Você não tem permissão de utilizar esse comando! Permissão necessária: \`Adiministrador\`**`, ephemeral: true })
+
         let guildConfig = await GuildConfig.findOne({ guildId: interaction.guild.id });
 
         if (!guildConfig) {

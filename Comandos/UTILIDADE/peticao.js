@@ -28,8 +28,13 @@ module.exports = {
             required: true,
         },
     ],
-
+    
     run: async (client, interaction) => {
+        const petitionGoal = interaction.options.getInteger("goal");
+        if(petitionGoal < 5) { 
+            interaction.reply(`${emojis.err} | O número mínimo de meta de assinaturas é 5!`) 
+            return
+        }
         interaction.deferReply();
 
         try {
@@ -50,7 +55,6 @@ module.exports = {
             const petitionChannelSend = client.channels.cache.get(guildConfig.canalDePeticoes)
             const petitionTitle = interaction.options.getString("title");
             const petitionDescription = interaction.options.getString("description");
-            const petitionGoal = interaction.options.getInteger("goal");
 
             let mensagemDeSugestao;
 
@@ -99,7 +103,7 @@ module.exports = {
                 ], components: [buttons], content: `**Nova petição do ${interaction.user}!**`
             })
 
-            interaction.editReply(`${emojis.check} | Petição criada com sucesso!`)
+            await interaction.editReply(`${emojis.check} | Petição criada com sucesso!`)
 
             newPetition.progressMessageId = mensagemDeSugestao.id
 

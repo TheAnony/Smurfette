@@ -2,16 +2,22 @@ require('../index')
 const client = require('../index')
 const { QuickDB } = require('quick.db')
 const db = new QuickDB();
+const GuildConfig = require('../Models/GuildConfig');
+const Sorteios = require('../Models/Sorteios');
 
-client.on('messageCreate', async (message) => {
+client.on('messageCreate', async message => {
     ////////////////// SORTEIO CLAIM - SORTEIO CLAIM - SORTEIO CLAIM - SORTEIO CLAIM
     let autor = message.author
-  
-    const canal = client.channels.cache.get('1136673955063808140')
-    if(message.channel.id !== '921107172316815414') return
+    if(autor.bot) return;
+
+    const guildConfig = await GuildConfig.findOne({ guildId: message.guild.id });
+    const sorteios = await Sorteios.findOne({ guildId: message.guild.id })
+
+    const canal = client.channels.cache.get(guildConfig?.canalDeSorteioID);
+    if(message.channel.id !== guildConfig.chatGeral) return
   
     let host = await db.get(`host`)
-    let g = await db.get(`ganhadorSorteio.ganhadores`)
+    let g = sorteios.ganhadores
     let claim = await db.get(`tempoClaim`)
     
     if(!host || !g || !claim) return
@@ -27,18 +33,20 @@ client.on('messageCreate', async (message) => {
       
      if (ganhadores.length == 1) { 
       //////////////// 1 GANHADOR - 1 GANHADOR - 1 GANHADOR- 1 GANHADOR
-      if(condição && condição2 && autor.id === ganhadores[0]) {
-          canal.send(`O ganhador <@!${ganhadores}> deu claim! Ele já pode resgatar seu prêmio.`)
+      if(condição && condição2 && autor.id === sorteios.ganhadores[0]) {
+          canal.send(`O ganhador <@!${sorteios.ganhadores[0]}> deu claim! Ele já pode resgatar seu prêmio.`)
           await db.delete('host')
-          await db.delete(`${`ganhadorSorteio.ganhadores`}`)
+          sorteios.ganhadoresNoClaim = null
+          sorteios.save()
           await db.delete(`tempoClaim`)
       }
   
      } else {
       //////////////// MAIS DE UM GANHADOR - MAIS DE UM GANHADOR - MAIS DE UM GANHADOR- MAIS DE UM GANHADOR
-      if(condição && condição2 && ganhadores.includes(autor.id)) {
-        canal.send(`O ganhador ${autor} deu claim! Ele já pode resgatar seu prêmio.`)
-        await db.delete(`${autor.id}`)
+      if(condição && condição2 && sorteios.ganhadores.includes(autor.id)) {
+        canal.send(`O ganhador ${autor} deu claim! Ele(a) já pode resgatar seu prêmio.`)
+        sorteios.ganhadoresNoClaim = sorteios.ganhadoresNoClaim.filter(id => id !== autor)
+        sorteios.save()
       }
      }
   })
