@@ -189,7 +189,7 @@ module.exports = {
             if (member.id === client.user.id) return interaction.reply({ ephemeral: true, content: `Ei, não posso banir a mim mesma!` })
             if (member.id === interaction.user.id) return interaction.reply({ ephemeral: true, content: 'Ei, você não pode banir a si mesmo (a)!' })
 
-            member.ban({ reason: [motivo] }).then(async () => {
+            member.ban({ reason: [motivo] }).then(async () => { 
                 interaction.reply({ embeds: [embedConfirmar], components: [button] }).then(async (messagem) => {
                     banCountMod++
 

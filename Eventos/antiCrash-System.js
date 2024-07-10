@@ -61,5 +61,4 @@ client.on('ready', () => {
     
         canal.send({embeds: [embed]})
          });
-  
   })
